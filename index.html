@@ -222,48 +222,82 @@ faiss.normalize_L2(query_vector)  <span class="highlight">⭐</span>
             <section>
                 <h2>Architecture & Pipeline Complet</h2>
 
-                <div class="visual-diagram">
+                <div class="two-columns" style="margin: 15px 0; gap: 15px; font-size: 0.85em;">
+                    <div>
+                        <div class="box-success" style="padding: 10px 15px; margin: 0 0 10px 0;">
+                            <strong>Mode 1 : Client PyQt5</strong> (99% production)
+                        </div>
+                        <div class="visual-diagram" style="padding: 15px; font-size: 0.9em;">
 <pre>
-<span style="color: #22c55e;">1️⃣ CLIENT PyQt5</span>                    <span style="color: #818cf8;">2️⃣ SERVEUR NAS (Docker)</span>
-┌─────────────────────┐           ┌────────────────────────────────┐
-│ Question utilisateur│──────────▶│ <span style="color: #f59e0b;">Container 2: API Backend</span>   │
-│ "Comment config TTS"│  HTTP POST│ • Validation question          │
-│         ↓           │           │ • Reçoit embedding 768D        │
-│ <span class="highlight">CamemBERT (99%)</span>    │           └────────────────────────────────┘
-│ • Embedding 768D    │                          │
-│ • Normalisation L2  │                          ↓
-└─────────────────────┘           ┌────────────────────────────────┐
-                                  │ <span class="highlight">Container 3: LLM + FAISS</span>       │
-                                  │ • <strong>FAISS search (~20ms)</strong>        │
-                                  │ • Top-3 documents pertinents   │
-                                  │         ↓                      │
-                                  │ ┌──────────────────┐           │
-                                  │ │ <span style="color: #6366f1;">MySQL (1366 Q&A)</span> │           │
-                                  │ └──────────────────┘           │
-                                  │         ↓                      │
-                                  │ • <strong>LLM génération (~1.2s)</strong>     │
-                                  │ • Réponse contextuelle         │
-                                  └────────────────────────────────┘
-                                             │
-                                             ↓
-┌─────────────────────┐           ┌────────────────────────────────┐
-│ Réponse affichée    │◀──────────│ Réponse JSON                   │
-└─────────────────────┘           └────────────────────────────────┘
+┌──────────────┐
+│ Question     │
+│      ↓       │
+│ <span class="highlight">CamemBERT</span>    │
+│ Embedding    │
+│ 768D         │
+└──────────────┘
+      │ JSON
+      ↓
+┌──────────────┐
+│ API Backend  │
+│ (Validation) │
+└──────────────┘
+      │
+      ↓
+┌──────────────┐
+│ LLM + FAISS  │
+│ • FAISS 20ms │
+│ • LLM 1.2s   │
+└──────────────┘
+      │
+      ↓
+┌──────────────┐
+│ MySQL 8.0    │
+│ 1366 Q&A     │
+└──────────────┘
 </pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="box" style="padding: 10px 15px; margin: 0 0 10px 0;">
+                            <strong>Mode 2 : Widget Web</strong> (1% test/démo)
+                        </div>
+                        <div class="visual-diagram" style="padding: 15px; font-size: 0.9em;">
+<pre>
+┌──────────────┐
+│ Question     │
+│ (pas embed.) │
+└──────────────┘
+      │ JSON
+      ↓
+┌──────────────┐
+│ API Backend  │
+│ (Validation) │
+└──────────────┘
+      │
+      ↓
+┌──────────────┐
+│ LLM + FAISS  │
+│ <span class="highlight">⚙️ Calcule</span>   │
+│ <span class="highlight">embedding</span>    │
+│ • FAISS 20ms │
+│ • LLM 1.2s   │
+└──────────────┘
+      │
+      ↓
+┌──────────────┐
+│ MySQL 8.0    │
+│ 1366 Q&A     │
+└──────────────┘
+</pre>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="two-columns" style="margin-top: 20px;">
-                    <div class="box-success">
-                        <strong>Temps de traitement :</strong><br>
-                        • FAISS : ~20ms<br>
-                        • LLM : ~1.2s<br>
-                        • <strong>Total : ~1.3s</strong>
-                    </div>
-                    <div class="box">
-                        <strong>Calcul Embedding :</strong><br>
-                        • Client : <strong>99%</strong> (prod)<br>
-                        • Container 3 : 1% (web test)
-                    </div>
+                <div class="box-success" style="margin: 10px 0; padding: 10px 15px; font-size: 0.85em;">
+                    <strong>4 Containers :</strong> MySQL 8.0 | API Backend (FastAPI :9000) | LLM+FAISS (:8001 interne) | phpMyAdmin (dev) |
+                    <strong>Format :</strong> Communication JSON | <strong>Perf :</strong> ~1.3s total
                 </div>
             </section>
 
