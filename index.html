@@ -81,7 +81,7 @@
                             <td>Moins précis</td>
                         </tr>
                         <tr>
-                            <td><strong>paraphrase-multilingual-MiniLM</strong></td>
+                            <td><strong>paraphrase-multilingual-MiniLM-L12-v2</strong></td>
                             <td><span class="highlight">✅ Contextuel</span></td>
                             <td><span class="highlight">✅ Multilingue</span></td>
                             <td>Léger mais moins précis FR</td>
@@ -141,6 +141,11 @@ Mot "banque" analyse son contexte :
                             <td><span style="color: #ef4444;">❌ Contexte perdu</span></td>
                         </tr>
                         <tr>
+                            <td>paraphrase-multilingual-MiniLM-L12-v2</td>
+                            <td>Léger, multilingue</td>
+                            <td><span style="color: #f59e0b;">⚠️ Moins précis FR</span></td>
+                        </tr>
+                        <tr>
                             <td>OpenAI API</td>
                             <td>Excellent</td>
                             <td><span style="color: #ef4444;">❌ Coût + RGPD</span></td>
@@ -162,34 +167,51 @@ Mot "banque" analyse son contexte :
             <section>
                 <h2>Recherche Vectorielle - FAISS</h2>
 
-                <p class="emphasis">IndexFlatIP - Recherche Exhaustive</p>
+                <p class="emphasis">Alternatives à IndexFlatIP évaluées</p>
 
-                <div class="two-columns">
-                    <div>
-                        <h3>Exhaustif (Flat)</h3>
-                        <div class="box-success">
-                            <strong>IndexFlatIP</strong><br>
-                            Compare TOUS les 1366 vecteurs<br><br>
-                            ✅ Précision 100%<br>
-                            ✅ <span class="highlight">~20ms</span><br>
-                            ✅ Pas de tuning
-                        </div>
-                    </div>
-                    <div>
-                        <h3>Approximatif (ANN)</h3>
-                        <div class="box-warning">
-                            <strong>IVF / HNSW</strong><br>
-                            Cherche sous-ensemble<br><br>
-                            ⚠️ Précision 95-98%<br>
-                            ✅ Plus rapide (gros volumes)<br>
-                            ❌ Complexité
-                        </div>
-                    </div>
+                <div class="comparison-table">
+                    <table>
+                        <tr>
+                            <th>Index FAISS</th>
+                            <th>Précision</th>
+                            <th>Vitesse</th>
+                            <th>RAM</th>
+                            <th>Quand l'utiliser ?</th>
+                        </tr>
+                        <tr style="background: rgba(34, 197, 94, 0.1);">
+                            <td><strong>IndexFlatIP</strong> ✅</td>
+                            <td><span class="highlight">100%</span></td>
+                            <td>O(n)</td>
+                            <td>Faible</td>
+                            <td><strong>&lt; 10K vecteurs (TOI)</strong></td>
+                        </tr>
+                        <tr>
+                            <td>IndexIVFFlat</td>
+                            <td>95-99%</td>
+                            <td>O(√n)</td>
+                            <td>Moyenne</td>
+                            <td>10K - 1M vecteurs</td>
+                        </tr>
+                        <tr>
+                            <td>IndexHNSW</td>
+                            <td>98-100%</td>
+                            <td>O(log n)</td>
+                            <td>Haute</td>
+                            <td>&gt; 1M vecteurs</td>
+                        </tr>
+                        <tr>
+                            <td>IndexLSH</td>
+                            <td>85-95%</td>
+                            <td>O(log n)</td>
+                            <td>Faible</td>
+                            <td>&gt; 10M vecteurs</td>
+                        </tr>
+                    </table>
                 </div>
 
-                <p class="small-text" style="text-align: center;">
-                    Avec 1366 docs : Exhaustif optimal (gain ANN négligeable, perte précision inacceptable)
-                </p>
+                <div class="box-success">
+                    <strong>Décision :</strong> Avec 1366 vecteurs, IndexFlatIP offre précision 100% et ~20ms de latence. Pas besoin d'approximation (ANN).
+                </div>
             </section>
 
             <!-- SLIDE 8: Similarité Cosinus -->
@@ -219,48 +241,78 @@ faiss.normalize_L2(query_vector)  <span class="highlight">⭐</span>
             </section>
 
             <!-- SLIDE 9: Architecture Pipeline Complet -->
-            <section>
+            <section class="architecture-slide">
                 <h2>Architecture & Pipeline Complet</h2>
 
-                <div class="visual-diagram" style="margin: 10px 0; padding: 12px;">
-<pre style="font-size: 0.95em; line-height: 1.3;">
-<span style="color: #22c55e;">📱 CLIENT PyQt5 (99%)</span>       <span style="color: #f59e0b;">🌐 Widget Web (1%)</span>      <span style="color: #818cf8;">🐳 SERVEUR NAS (4 Containers)</span>
-Question utilisateur     Question utilisateur
-        ↓                        ↓               ┌────────────────────────┐
-<span class="highlight">CamemBERT 768D</span>               ❌ Pas d'embedding    │ <span style="color: #f59e0b;">Container 2: API</span>       │
-Embedding calculé                ↓               │ FastAPI :9000 (public) │
-        ↓                        ↓               │ Validation + Routing   │
-        └────────JSON (HTTP)─────┴──────────────▶└────────────────────────┘
-                                                             │ JSON interne
-                                                             ↓
-                                                 ┌────────────────────────┐
-                                                 │ <span class="highlight">Container 3: LLM+FAISS</span> │
-                                                 │ :8001 (interne only)   │
-                                                 │ <span style="color: #f59e0b;">⚙️ Calcule embedding</span>  │
-                                                 │ <span style="color: #f59e0b;">si absent (mode Web)</span>  │
-                                                 │ • FAISS IndexFlatIP    │
-                                                 │   (~20ms, 1366 docs)   │
-                                                 │ • Gemma-2-2B Q4        │
-                                                 │   (~1.2s génération)   │
-                                                 └────────────────────────┘
-                                                             │ SQL
-                                                             ↓
-                                                 ┌────────────────────────┐
-                                                 │ <span style="color: #6366f1;">Container 1: MySQL 8.0</span> │
-                                                 │ • 1366 Q&A pairs       │
-                                                 │ • Conversations        │
-                                                 │ • Feedback users       │
-                                                 └────────────────────────┘
-<span style="color: #94a3b8;">Container 4: phpMyAdmin (dev - admin MySQL uniquement)</span>
-</pre>
-                </div>
-
-                <div class="two-columns" style="margin: 8px 0; gap: 10px;">
-                    <div class="box-success" style="padding: 8px 12px; margin: 0; font-size: 0.75em;">
-                        <strong>Performance :</strong> ~1.3s total (FAISS 20ms + LLM 1.2s)
+                <div class="arch-container">
+                    <div class="arch-row">
+                        <div class="arch-clients">
+                            <div class="arch-section-title" style="color: #22c55e;">CLIENTS</div>
+                            <div class="arch-box client">
+                                <div class="arch-box-title" style="color: #22c55e;">PyQt5 (99%)</div>
+                                <div class="arch-box-content">Q + <span class="highlight">CamemBERT</span><br>Embed 768D</div>
+                            </div>
+                            <div class="arch-box client">
+                                <div class="arch-box-title" style="color: #f59e0b;">Web (1%)</div>
+                                <div class="arch-box-content">Q seule<br><span style="color: #ef4444;">❌</span> Sans embed</div>
+                            </div>
+                        </div>
+                        
+                        <div style="min-width: 60px; text-align: center; color: #94a3b8; font-size: 0.85em;">JSON<br>HTTP</div>
+                        
+                        <div class="arch-servers">
+                            <div class="arch-section-title" style="color: #818cf8;">SERVEUR NAS - 4 Containers Docker</div>
+                            
+                            <div class="arch-box server">
+                                <div class="arch-box-title" style="color: #f59e0b;">Container 2: API Backend (:9000 public)</div>
+                                <div class="arch-box-content">• Validation question<br>• Gestion sessions</div>
+                            </div>
+                            
+                            <div class="arch-arrow">↓ HTTP POST /search</div>
+                            
+                            <div class="arch-box server highlight">
+                                <div class="arch-box-title" style="color: #22c55e;">Container 3: LLM + FAISS (:8001 interne)</div>
+                                <div class="arch-box-content">
+                                    1️⃣ Embedding (si absent): Q → CamemBERT → [768D]<br>
+                                    2️⃣ FAISS Search (~20ms): [768D] → <span class="highlight">index pré-calculé (1366 vecteurs)</span><br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;→ top-5 IDs: [42, 15, 89, 50, 87]
+                                </div>
+                            </div>
+                            
+                            <div class="arch-arrow">↓ SELECT WHERE id IN (...)</div>
+                            
+                            <div class="arch-box server">
+                                <div class="arch-box-title" style="color: #6366f1;">Container 1: MySQL 8.0</div>
+                                <div class="arch-box-content">• 1366 Q&A (base_connaissances)<br>• Retourne texte complet des top-3</div>
+                            </div>
+                            
+                            <div class="arch-arrow">↓ JSON: contexte (3 Q&A texte)</div>
+                            
+                            <div class="arch-box server highlight">
+                                <div class="arch-box-title" style="color: #22c55e;">Container 3: LLM + FAISS</div>
+                                <div class="arch-box-content">
+                                    3️⃣ Génération LLM (Gemma-2-2B Q4 ~1.2s): Q + contexte → réponse<br>
+                                    4️⃣ Calcul confiance (similarité cosinus)
+                                </div>
+                            </div>
+                            
+                            <div class="arch-arrow">↓ JSON: {reponse, confiance, IDs}</div>
+                            
+                            <div class="arch-box server">
+                                <div class="arch-box-title" style="color: #f59e0b;">Container 2: API Backend</div>
+                                <div class="arch-box-content">• Enregistre conversation → MySQL<br>• Récupère détails sources</div>
+                            </div>
+                            
+                            <div class="arch-arrow">↓ JSON: réponse complète</div>
+                            
+                            <div class="arch-box server">
+                                <div class="arch-box-content" style="text-align: center; font-weight: bold;">CLIENT: Affiche réponse + sources + confiance</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="box" style="padding: 8px 12px; margin: 0; font-size: 0.75em;">
-                        <strong>Format :</strong> JSON | <strong>Modèle :</strong> CamemBERT MS MARCO 768D
+                    
+                    <div class="arch-footer">
+                        Container 4: phpMyAdmin (dev) | Auto-sync FAISS: rebuild si MySQL modifié
                     </div>
                 </div>
             </section>
@@ -377,7 +429,7 @@ F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
 
                 <div class="box-success" style="margin-top: 40px; font-size: 1.2em;">
                     <strong>URL DÉMO</strong><br>
-                    <span style="font-size: 0.9em;">http://185.246.86.162:8080</span><br>
+                    <a href="http://185.246.86.162:8080" target="_blank" class="demo-link" style="font-size: 0.9em;">http://185.246.86.162:8080</a><br>
                     <span style="font-size: 0.7em; color: #94a3b8;">(Interface web test - Container 3 calcule embedding)</span>
                 </div>
             </section>
@@ -386,24 +438,24 @@ F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
             <section class="center">
                 <h2>Conclusion</h2>
 
-                <div class="metric-grid" style="max-width: 700px; margin: 40px auto;">
-                    <div class="metric-card">
-                        <div class="metric-value">95%</div>
-                        <div class="metric-label">F1-Score</div>
+                <div class="metric-grid" style="max-width: 600px; margin: 15px auto; gap: 10px;">
+                    <div class="metric-card" style="padding: 12px;">
+                        <div class="metric-value" style="font-size: 1.8em;">95%</div>
+                        <div class="metric-label" style="font-size: 0.75em;">F1-Score</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-value">~20ms</div>
-                        <div class="metric-label">FAISS</div>
+                    <div class="metric-card" style="padding: 12px;">
+                        <div class="metric-value" style="font-size: 1.8em;">~20ms</div>
+                        <div class="metric-label" style="font-size: 0.75em;">FAISS</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-value">100%</div>
-                        <div class="metric-label">Objectifs</div>
+                    <div class="metric-card" style="padding: 12px;">
+                        <div class="metric-value" style="font-size: 1.8em;">100%</div>
+                        <div class="metric-label" style="font-size: 0.75em;">Objectifs</div>
                     </div>
                 </div>
 
-                <div class="box" style="max-width: 800px; margin: 30px auto; text-align: left; font-size: 0.9em;">
+                <div class="box" style="max-width: 750px; margin: 15px auto; text-align: left; font-size: 0.8em; padding: 12px 18px;">
                     <strong>Fondamentaux ML Démontrés :</strong>
-                    <ul style="margin: 15px 0 0 20px;">
+                    <ul style="margin: 8px 0 0 20px; line-height: 1.3;">
                         <li>Embeddings contextuels : CamemBERT</li>
                         <li>Self-Attention : 12 têtes multi-head</li>
                         <li>Recherche vectorielle : FAISS exhaustif</li>
@@ -413,7 +465,7 @@ F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
                     </ul>
                 </div>
 
-                <p style="margin-top: 40px; font-size: 1.1em; color: #a5b4fc;">
+                <p style="margin-top: 15px; font-size: 0.95em; color: #a5b4fc;">
                     <em>"Client PyQt5 + 3 containers Docker.<br>
                     Pipeline ML optimisé : RAG + Quantization."</em>
                 </p>
