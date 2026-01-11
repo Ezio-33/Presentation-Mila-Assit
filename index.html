@@ -283,7 +283,7 @@ faiss.normalize_L2(query_vector)  <span class="highlight">⭐</span>
                             
                             <div class="arch-box server">
                                 <div class="arch-box-title" style="color: #6366f1;">Container 1: MySQL 8.0</div>
-                                <div class="arch-box-content">• 1366 Q&A (base_connaissances)<br>• Retourne texte complet des top-3</div>
+                                <div class="arch-box-content">• 1366 Q&A (base_connaissances)<br>• Retourne texte complet des top-5</div>
                             </div>
                             
                             <div class="arch-arrow">↓ JSON: contexte (3 Q&A texte)</div>
@@ -291,7 +291,7 @@ faiss.normalize_L2(query_vector)  <span class="highlight">⭐</span>
                             <div class="arch-box server highlight">
                                 <div class="arch-box-title" style="color: #22c55e;">Container 3: LLM + FAISS</div>
                                 <div class="arch-box-content">
-                                    3️⃣ Génération LLM (Gemma-2-2B Q4 ~1.2s): Q + contexte → réponse<br>
+                                    3️⃣ Génération LLM: Q + contexte → réponse<br>
                                     4️⃣ Calcul confiance (similarité cosinus)
                                 </div>
                             </div>
