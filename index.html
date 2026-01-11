@@ -283,7 +283,7 @@
                         <tr>
                             <th>Technique</th>
                             <th>Contexte</th>
-                            <th>Français</th>
+                            <th>Multilingue</th>
                             <th>Verdict</th>
                         </tr>
                         <tr>
@@ -292,8 +292,14 @@
                             <td>⚠️ Générique</td>
                             <td>Moins précis</td>
                         </tr>
+                        <tr>
+                            <td><strong>paraphrase-multilingual-MiniLM</strong></td>
+                            <td><span class="highlight">✅ Contextuel</span></td>
+                            <td><span class="highlight">✅ Multilingue</span></td>
+                            <td>Léger mais moins précis FR</td>
+                        </tr>
                         <tr style="background: rgba(34, 197, 94, 0.1);">
-                            <td><strong>CamemBERT</strong></td>
+                            <td><strong>CamemBERT MS MARCO</strong></td>
                             <td><span class="highlight">✅ Contextuel</span></td>
                             <td><span class="highlight">✅ Spécialisé FR</span></td>
                             <td><strong>Precision@5 : 92%</strong></td>
@@ -424,57 +430,105 @@ faiss.normalize_L2(query_vector)  <span class="highlight">⭐</span>
                 </div>
             </section>
 
-            <!-- SLIDE 9: Architecture -->
+            <!-- SLIDE 9: Architecture - Client -->
             <section>
-                <h2>Architecture Complète</h2>
+                <h2>Architecture - Client PyQt5</h2>
 
-                <div class="visual-diagram">
+                <div class="box" style="font-size: 1.1em; margin: 30px auto;">
+                    <strong style="color: #818cf8; font-size: 1.3em;">Application Desktop PyQt5</strong>
+                </div>
+
+                <div class="visual-diagram" style="font-size: 0.85em;">
 <pre>
-<span style="color: #a5b4fc;">1. CLIENT PyQt5 Desktop App</span>
-┌────────────────────────────────┐
-│ Question utilisateur           │
-│         ↓                      │
-│ <span class="highlight">CamemBERT (TOUJOURS)</span>         │
-│ • Calcul embedding 768D        │
-│ • Normalisation L2             │
-│ • SentenceTransformer          │
-└────────────────────────────────┘
-         │ HTTP POST /search
-         │ {embedding: [768 floats]}
-         ▼
-<span style="color: #a5b4fc;">SERVEUR NAS (3 Containers Docker)</span>
-┌────────────────────────────────┐
-│ <span class="accent">Container 2: API Backend</span>     │
-│ • Validation question          │
-│ • ⚠️ NE calcule PAS embedding  │
-│ • Délégation Container 3       │
-└────────────────────────────────┘
-         │ Passe embedding tel quel
-         ▼
-┌────────────────────────────────┐
-│ <span class="highlight">Container 3: LLM+FAISS</span>        │
-│ • Reçoit embedding client      │
-│ • FAISS search (~20ms)         │
-│ • Contexte MySQL top-3         │
-│ • LLM génération (~1.2s)       │
-└────────────────────────────────┘
-         │ SQL Query
-         ▼
-┌────────────────────────────────┐
-│ Container 1: MySQL 8.0         │
-│ • 1366 Q&A pairs               │
-└────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│  <span style="color: #22c55e;">Question utilisateur</span>                 │
+│  "Comment configurer le TTS ?"          │
+└─────────────────────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────┐
+│  <span class="highlight">CamemBERT MS MARCO</span>                    │
+│  • Calcul embedding <strong>768 dimensions</strong>     │
+│  • Normalisation L2                     │
+│  • Via sentence-transformers            │
+└─────────────────────────────────────────┘
+                   ↓
+┌─────────────────────────────────────────┐
+│  <span style="color: #f59e0b;">HTTP POST /search</span>                    │
+│  {                                      │
+│    "embedding": [768 floats],           │
+│    "question": "Comment..."             │
+│  }                                      │
+└─────────────────────────────────────────┘
 </pre>
                 </div>
 
-                <div class="box">
+                <div class="box-success">
                     <strong>Calcul Embedding :</strong><br>
                     • Client calcule <strong>99% du temps</strong> (production normale)<br>
-                    • Container 3 calcule <strong>1% du temps</strong> (mode dégradé - interface graphique test)
+                    • Container 3 calcule <strong>1% du temps</strong> (mode dégradé - interface web test)
                 </div>
             </section>
 
-            <!-- SLIDE 10: Quantization -->
+            <!-- SLIDE 10: Architecture - Serveur -->
+            <section>
+                <h2>Architecture - Serveur NAS (Docker)</h2>
+
+                <div class="box" style="font-size: 1.1em; margin: 20px auto;">
+                    <strong style="color: #818cf8; font-size: 1.3em;">3 Containers Docker</strong>
+                </div>
+
+                <div class="two-columns" style="gap: 20px; font-size: 0.85em;">
+                    <div>
+                        <div class="box" style="background: rgba(245, 158, 11, 0.15); border-left: 4px solid #f59e0b;">
+                            <strong style="font-size: 1.1em;">Container 2: API Backend</strong><br><br>
+                            <ul style="margin: 10px 0; padding-left: 20px;">
+                                <li>Reçoit requête HTTP</li>
+                                <li>Validation question</li>
+                                <li>⚠️ <strong>NE calcule PAS</strong> l'embedding</li>
+                                <li>Délégation Container 3</li>
+                            </ul>
+                        </div>
+
+                        <div class="box-success" style="margin-top: 20px;">
+                            <strong style="font-size: 1.1em;">Container 3: LLM + FAISS</strong><br><br>
+                            <ul style="margin: 10px 0; padding-left: 20px;">
+                                <li>Reçoit embedding du client</li>
+                                <li>FAISS search <strong>(~20ms)</strong></li>
+                                <li>Récupère top-3 via MySQL</li>
+                                <li>LLM génération <strong>(~1.2s)</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="box" style="background: rgba(99, 102, 241, 0.15); border-left: 4px solid #6366f1;">
+                            <strong style="font-size: 1.1em;">Container 1: MySQL 8.0</strong><br><br>
+                            <ul style="margin: 10px 0; padding-left: 20px;">
+                                <li><strong>1 366 Q&A pairs</strong></li>
+                                <li>Configuration AI_licia</li>
+                                <li>Utilisation plateforme</li>
+                                <li>Personnalisation IA</li>
+                            </ul>
+                        </div>
+
+                        <div class="visual-diagram" style="margin-top: 20px; padding: 15px; font-size: 0.8em;">
+<pre style="font-size: 0.9em;">
+<span style="color: #818cf8;">Flux de données :</span>
+
+Client → Container 2
+    ↓
+Container 2 → Container 3
+    ↓
+Container 3 → Container 1 (SQL)
+    ↓
+Container 3 → Client (Réponse)
+</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 11: Quantization -->
             <section>
                 <h2>LLM - Quantization Q4</h2>
 
@@ -505,7 +559,7 @@ faiss.normalize_L2(query_vector)  <span class="highlight">⭐</span>
                 </div>
             </section>
 
-            <!-- SLIDE 11: Validation -->
+            <!-- SLIDE 12: Validation -->
             <section>
                 <h2>Validation : F1-Score</h2>
 
@@ -536,7 +590,7 @@ F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
                 </div>
             </section>
 
-            <!-- SLIDE 12: Succès & Apprentissages -->
+            <!-- SLIDE 13: Succès & Apprentissages -->
             <section>
                 <h2>Succès & Apprentissages</h2>
 
@@ -571,7 +625,7 @@ F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
                 </div>
             </section>
 
-            <!-- SLIDE 13: Démonstration -->
+            <!-- SLIDE 14: Démonstration -->
             <section class="center">
                 <h2>Démonstration Live</h2>
 
@@ -591,7 +645,7 @@ F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
                 </div>
             </section>
 
-            <!-- SLIDE 14: Conclusion -->
+            <!-- SLIDE 15: Conclusion -->
             <section class="center">
                 <h2>Conclusion</h2>
 
@@ -628,7 +682,7 @@ F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
                 </p>
             </section>
 
-            <!-- SLIDE 15: Questions -->
+            <!-- SLIDE 16: Questions -->
             <section class="center">
                 <h1 style="font-size: 3em;">Questions ?</h1>
 
