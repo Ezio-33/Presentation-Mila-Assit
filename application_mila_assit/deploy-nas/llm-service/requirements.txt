@@ -1,0 +1,54 @@
+# ===================================================================
+# Requirements - Container 3 : LLM + FAISS Service
+# Optimisé pour : Gemma-2-2B Q4, FAISS, Auto-sync
+# ===================================================================
+
+# API Web (FastAPI minimal pour endpoints internes)
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# Base de données (connexion MySQL pour auto-sync)
+mysql-connector-python==9.1.0
+
+# Intelligence Artificielle - Core
+# CRITICAL: numpy<2.0 car faiss-cpu et torch compilés avec NumPy 1.x
+numpy<2.0
+sentence-transformers==3.3.1
+faiss-cpu==1.9.0.post1
+transformers==4.46.0
+# torch est installe separement dans Dockerfile.gpu
+
+# Dependance manquante pour transformers.integrations
+codecarbon>=2.3.0
+
+# LLM Quantizé (Gemma-2-2B Q4)
+llama-cpp-python==0.3.2
+
+# Optimisation & Accélération
+accelerate==1.2.1
+
+# Utilitaires
+python-dotenv==1.0.1
+requests==2.32.3
+
+# Logging
+loguru==0.7.3
+
+# ===================================================================
+# Notes d'installation
+# ===================================================================
+# Installation:
+#   pip install -r requirements.txt
+#
+# Taille totale estimée: ~2.8 Go
+# - torch: ~800 Mo
+# - sentence-transformers: ~500 Mo
+# - faiss-cpu: ~100 Mo
+# - transformers: ~400 Mo
+# - llama-cpp-python: ~50 Mo (avec support CPU)
+# - Autres: ~950 Mo
+#
+# Temps d'installation: ~10-15 minutes (selon CPU)
+# ===================================================================

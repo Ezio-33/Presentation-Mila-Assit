@@ -1,0 +1,19 @@
+# Requirements pour Mila-Assist Qt Application
+# Installation : pip install -r requirements.txt
+# Architecture 4 containers (Déc 2025): Client calcule embeddings localement
+# Modèle embeddings: antoinelouis/biencoder-camembert-base-mmarcoFR (Français optimisé)
+
+PyQt5==5.15.11
+PyQt5-Qt5==5.15.15
+PyQt5-sip==12.16.1
+requests==2.32.3
+urllib3==2.2.3
+
+# Embeddings (Architecture 4 containers - CamemBERT FR 768 dims)
+sentence-transformers==3.3.1
+transformers==4.57.3
+torch==2.5.1
+numpy<2.0
+
+# Pour créer un .exe Windows (optionnel)
+# pyinstaller==6.13.0

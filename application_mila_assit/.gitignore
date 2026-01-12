@@ -1,0 +1,219 @@
+# ============================================================================
+# .gitignore - Mila-Assist Project
+# ============================================================================
+
+# ============================================================================
+# Secrets et Configuration Sensible
+# ============================================================================
+.env
+docker/.env
+deploy-nas/.env
+*.env
+!.env.example
+!docker/.env.example
+env.client
+
+# Clés JWT et certificats
+*.pem
+*.key
+*.crt
+secrets/
+
+# ============================================================================
+# Modèles IA (Fichiers volumineux)
+# ============================================================================
+*.gguf
+*.bin
+*.safetensors
+modeles/*.gguf
+modeles/gemma-*
+deploy-nas/modeles/*.gguf
+deploy-nas/modeles/gemma-*
+
+# Cache HuggingFace
+.cache/
+cache_huggingface/
+deploy-nas/cache_huggingface/
+transformers_cache/
+
+# Adaptateurs LoRA (si générés localement)
+modeles/adaptateurs_lora/*.bin
+modeles/adaptateurs_lora/*.safetensors
+
+# ============================================================================
+# Python
+# ============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.pytest_cache/
+
+# ============================================================================
+# Logs et Données
+# ============================================================================
+logs/
+*.log
+log/
+deploy-nas/log/
+backend/logs/
+
+# Logs générés automatiquement par log-collector (contiennent données sensibles)
+deploy-nas/log/*.txt
+!deploy-nas/log/README_LOGS.md
+!deploy-nas/log/.info
+
+# Données MySQL
+mysql_data/
+deploy-nas/mysql_data/
+*.sql.backup
+backup_*.sql
+
+# Données FAISS
+donnees/
+deploy-nas/donnees/
+*.index
+faiss_index/
+deploy-nas/donnees/faiss_index/
+
+# Backups intents.json
+qa_bot/intents.json.backup
+
+# ============================================================================
+# Docker
+# ============================================================================
+# Volumes Docker persistants
+volumes/
+docker-volumes/
+
+# ============================================================================
+# IDE et Éditeurs
+# ============================================================================
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ============================================================================
+# OS
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ============================================================================
+# Documentation Temporaire
+# ============================================================================
+# Documentation générée
+docs/_build/
+site/
+
+# Rapports temporaires (garder les rapports finaux)
+RAPPORT_TEMP_*.md
+
+# ============================================================================
+# Fichiers Temporaires Projet
+# ============================================================================
+# Scripts de test temporaires
+test_*.py
+temp_*.py
+scratch_*.py
+
+# Fichiers temporaires de développement
+TODO_LOCAL.md
+NOTES_DEV.md
+
+# ============================================================================
+# Exceptions (Fichiers à GARDER dans git)
+# ============================================================================
+# Garder les fichiers exemple
+!.env.example
+!docker/.env.example
+
+# Garder les modèles de configuration
+!modeles/README.md
+!modeles/.gitkeep
+
+# Garder la structure des dossiers
+!donnees/.gitkeep
+!logs/.gitkeep

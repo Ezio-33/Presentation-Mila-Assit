@@ -1,0 +1,52 @@
+# ===================================================================
+# .gitignore pour deploy-nas/
+# ===================================================================
+# Ne jamais versionner les données MySQL, logs, cache, et modèles
+# Ces dossiers sont recréés automatiquement par Docker Compose
+
+# Données MySQL (maintenant un volume Docker nommé, plus de dossier local)
+mysql_data/
+
+# Logs des services (garder la structure des dossiers mais ignorer les fichiers)
+log/**/*.log
+log/**/*.html
+!log/*/.gitkeep
+
+# Cache HuggingFace (modèles téléchargés)
+cache_huggingface/
+
+# Modèles LLM (trop volumineux)
+modeles/gemma/
+
+# Index FAISS (recréé automatiquement)
+donnees/faiss_index/*.bin
+donnees/faiss_index/*.index
+
+# Fichiers temporaires Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environnement virtuel
+venv/
+env/
+ENV/
+
+# Configuration locale (peut contenir des secrets)
+.env.local
+
+# Fichiers IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.claude/
+.specify/
+specs/
+
+# Fichiers système
+.DS_Store
+Thumbs.db

@@ -1,0 +1,398 @@
+version: "3.8"
+
+# ========================================
+# Mila-Assist - Configuration CORRIGÉE pour Synology Container Manager
+# ========================================
+# Version améliorée avec corrections de sécurité et stabilité
+# Date: 5 Janvier 2026
+#
+# IMPORTANT : Placez ce dossier dans /volume1/docker/RNCP-6/Mila-assit/
+
+services:
+  # Base de données MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: mila_assist_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: Europe/Paris
+      MYSQL_INITDB_SKIP_TZINFO: 1
+
+    volumes:
+      # Données MySQL (volume Docker nommé - géré automatiquement)
+      - mysql_data:/var/lib/mysql
+      # Scripts d'initialisation (exécutés dans l'ordre alphabétique)
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./mysql/02-migration_base_connaissances.sql:/docker-entrypoint-initdb.d/02-migration.sql:ro
+      - ./mysql/02-triggers.sql:/docker-entrypoint-initdb.d/03-triggers.sql:ro
+      # Logs MySQL
+      - ./log/mysql:/var/log/mysql
+
+    # Port interne uniquement
+    expose:
+      - "3306"
+
+    networks:
+      - mila-network
+
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --default-time-zone=+01:00
+      - --skip-name-resolve
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD", "--silent"]
+      timeout: 5s
+      retries: 20
+      interval: 10s
+      start_period: 120s
+
+    security_opt:
+      - no-new-privileges:true
+
+    # AJOUT : Limites de ressources pour stabilité
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1536M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Container 2: API FastAPI (Orchestration)
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mila_assist_api
+    restart: unless-stopped
+    volumes:
+      # Logs API
+      - ./log/api:/app/logs
+
+    environment:
+      - TZ=Europe/Paris
+      # Base de données
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      # Sécurité et authentification
+      - API_KEY=${API_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
+      - SECRET_KEY=${SECRET_KEY}
+      # Container 3 (LLM + FAISS Service)
+      - LLM_SERVICE_HOST=llm
+      - LLM_SERVICE_PORT=8001
+      # Environnement
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO  # CORRECTION : DEBUG → INFO en production
+      - PYTHONUNBUFFERED=1
+
+    ports:
+      - "9000:8000"
+
+    # CORRECTION : Ajout de la dépendance au service LLM
+    depends_on:
+      mysql:
+        condition: service_healthy
+      llm:
+        condition: service_healthy
+
+    networks:
+      - mila-network
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/sante"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+    security_opt:
+      - no-new-privileges:true
+
+    # AJOUT : Limites de ressources
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Container 3: LLM + FAISS Service
+  llm:
+    build:
+      context: ./llm-service
+      dockerfile: Dockerfile
+    container_name: mila_llm_faiss
+    restart: unless-stopped
+    volumes:
+      # Modèles IA (lecture seule)
+      - ./modeles:/app/modeles:ro
+      # Index FAISS (LECTURE-ÉCRITURE pour rebuild auto)
+      - ./donnees/faiss_index:/app/donnees/faiss_index
+      # AJOUT : Backups FAISS pour restauration
+      - ./backups/faiss:/app/backups/faiss
+      # Cache HuggingFace
+      - ./cache_huggingface:/app/cache_huggingface
+      # Logs
+      - ./log/llm:/app/logs
+
+    environment:
+      - TZ=Europe/Paris
+      # Base de données
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      # Cache HuggingFace (CRITICAL pour téléchargement modèles)
+      - HF_HOME=/app/cache_huggingface
+      - TRANSFORMERS_CACHE=/app/cache_huggingface
+      # Configuration embeddings (modèle local - CamemBERT MS MARCO FR)
+      # Optimisé FRANÇAIS uniquement - CamemBERT spécialisé recherche RAG (MS MARCO FR)
+      - EMBEDDINGS_MODEL_NAME=antoinelouis/biencoder-camembert-base-mmarcoFR
+      - EMBEDDINGS_MODEL_PATH=/app/modeles/embeddings
+      - EMBEDDINGS_DIMENSION=768
+      - EMBEDDINGS_MAX_SEQ_LENGTH=256
+      - EMBEDDINGS_BATCH_SIZE=32
+      - EMBEDDINGS_DEVICE=cpu
+      # Configuration FAISS
+      - FAISS_INDEX_PATH=/app/donnees/faiss_index/index_faiss.bin
+      - FAISS_BACKUP_PATH=/app/backups/faiss  # AJOUT : Chemin des backups
+      - FAISS_TOP_K=3
+      # Configuration LLM (Gemma-2-2B-IT-Q4 - Quantifié pour CPU)
+      - LLM_MODEL_PATH=/app/modeles/gemma/gemma-2-2b-it-q4.gguf
+      - LLM_N_CTX=4096
+      - LLM_N_THREADS=4
+      - LLM_MAX_TOKENS=200
+      - LLM_TEMPERATURE=0.3
+      - LLM_TOP_P=0.9
+      - LLM_TOP_K=40
+      - LLM_REPETITION_PENALTY=1.1
+      - LLM_N_BATCH=512
+      # Configuration Auto-Sync
+      - AUTO_SYNC_INTERVAL=60
+      - AUTO_SYNC_MYSQL_UPTIME_THRESHOLD=300
+      # Environnement
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - PYTHONUNBUFFERED=1
+
+    # Port interne uniquement (pas d'exposition externe)
+    expose:
+      - "8001"
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - mila-network
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 300s  # CORRECTION : 120s → 300s pour chargement modèle LLM
+
+    security_opt:
+      - no-new-privileges:true
+
+    # AJOUT : Limites de ressources (critique pour LLM)
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 3584M  # 3.5 GB max
+        reservations:
+          cpus: '2.0'
+          memory: 2048M  # 2 GB minimum
+
+  # Interface d'administration MySQL (phpMyAdmin)
+  # NOTE : Désactiver en production ou restreindre l'accès
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: mila_assist_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "18548:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 0
+      UPLOAD_LIMIT: 64M
+      # AJOUT : Désactiver en production
+      # Commentez la section ports: ci-dessus ou tout le service en prod
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - mila-network
+
+    security_opt:
+      - no-new-privileges:true
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    # AJOUT : Limites de ressources
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+networks:
+  mila-network:
+    driver: bridge
+
+volumes:
+  # Volume Docker pour MySQL (géré automatiquement par Docker)
+  mysql_data:
+    driver: local
+
+# ========================================
+# NOTES POUR CONTAINER MANAGER (VERSION CORRIGÉE)
+# ========================================
+# ARCHITECTURE 4 CONTAINERS (Version corrigée - 5 Janvier 2026)
+#
+# Container 1: MySQL 8.0 (1.5 GB RAM - avec limites)
+# Container 2: API Backend FastAPI (2 GB RAM - avec limites)
+# Container 3: LLM + FAISS Service (3.5 GB RAM - avec limites)
+# Container 4: phpMyAdmin (512 MB RAM - avec limites)
+#
+# Total RAM alloué : ~7.5 GB (avec overhead Docker)
+# Total RAM requis minimum : ~3 GB
+#
+# ========================================
+# CORRECTIONS APPLIQUÉES
+# ========================================
+# 1. Ajout des limites de ressources (deploy.resources) sur tous les services
+# 2. Correction dependance API -> LLM (depends_on llm avec healthcheck)
+# 3. Augmentation start_period LLM : 120s -> 300s
+# 4. LOG_LEVEL : DEBUG -> INFO en production (API)
+# 5. Ajout volume backup FAISS (./backups/faiss)
+# 6. Ajout variable FAISS_BACKUP_PATH
+# 7. Optimisation des healthchecks
+# 8. Documentation amelioree
+#
+# ========================================
+# PRÉREQUIS AVANT DÉMARRAGE
+# ========================================
+# 1. Créer les dossiers suivants (s'ils n'existent pas) :
+#    mkdir -p log/{mysql,api,llm}
+#    mkdir -p backups/faiss
+#    mkdir -p donnees/faiss_index
+#    mkdir -p cache_huggingface
+#    mkdir -p modeles/gemma
+#    mkdir -p modeles/embeddings
+#
+# 2. Vérifier que le fichier .env existe avec toutes les variables :
+#    - MYSQL_ROOT_PASSWORD
+#    - MYSQL_DATABASE
+#    - MYSQL_USER
+#    - MYSQL_PASSWORD
+#    - API_KEY
+#    - JWT_SECRET_KEY
+#    - JWT_ALGORITHM
+#    - JWT_ACCESS_TOKEN_EXPIRE_MINUTES
+#    - SECRET_KEY
+#
+# 3. Vérifier que le modèle Gemma existe :
+#    ls -lh modeles/gemma/gemma-2-2b-it-q4.gguf
+#
+# 4. Les dossiers suivants DOIVENT exister :
+#    - backend/ (avec Dockerfile)
+#    - llm-service/ (avec Dockerfile)
+#    - mysql/ (avec init.sql, 02-migration_base_connaissances.sql, 02-triggers.sql)
+#
+# ========================================
+# DÉPLOIEMENT VIA CONTAINER MANAGER
+# ========================================
+# 1. Copier ce fichier vers docker-compose.yml OU
+#    Renommer en docker-compose.yml
+#
+# 2. Ouvrir Container Manager sur Synology
+#
+# 3. Projet → Créer
+#
+# 4. Sélectionner le dossier contenant ce fichier
+#
+# 5. Container Manager build et démarre automatiquement
+#
+# 6. ORDRE DE DÉMARRAGE (automatique via depends_on) :
+#    MySQL → LLM Service → API → phpMyAdmin
+#
+# ========================================
+# ACCÈS AUX SERVICES
+# ========================================
+# - API Backend: http://nas-ip:9000
+# - API Documentation: http://nas-ip:9000/docs
+# - API Santé: http://nas-ip:9000/api/v1/sante
+# - phpMyAdmin: http://nas-ip:18548 (DEV uniquement - désactiver en PROD)
+# - LLM Service: http://llm:8001 (interne uniquement - pas d'accès externe)
+#
+# ========================================
+# GESTION VIA API
+# ========================================
+# - Container 3 Auto-Sync: Automatique (rebuild si MySQL redémarre)
+# - Force Rebuild FAISS: curl -X POST "http://nas-ip:9000/api/v1/admin/rebuild-faiss-index"
+# - Stats FAISS: curl "http://nas-ip:9000/api/v1/admin/faiss-stats"
+# - Santé globale: curl "http://nas-ip:9000/api/v1/sante"
+#
+# ========================================
+# AUTO-SYNC FAISS (Fonctionnalité existante)
+# ========================================
+# - Trigger 1: Index n'existe pas → rebuild automatique
+# - Trigger 2: MySQL redémarré (uptime < 5 min) → rebuild
+# - Trigger 3: Données modifiées (last_update changé) → rebuild
+# - Intervalle vérification: 60 secondes
+# - Backup automatique avant chaque rebuild (si FAISS_BACKUP_PATH configuré)
+#
+# ========================================
+# MONITORING RESSOURCES
+# ========================================
+# Vérifier l'utilisation via Container Manager ou :
+#   docker stats mila_assist_mysql mila_assist_api mila_llm_faiss mila_assist_phpmyadmin
+#
+# Si un service consomme trop de RAM :
+#   1. Vérifier les logs : docker logs <container_name>
+#   2. Ajuster les limites dans deploy.resources
+#   3. Redémarrer : docker-compose restart <service>
+#
+# ========================================
+# SÉCURITÉ EN PRODUCTION
+# ========================================
+# 1. Désactiver phpMyAdmin (commenter tout le service)
+# 2. Utiliser des secrets Docker au lieu de .env
+# 3. Restreindre les ports exposés (firewall)
+# 4. Activer les logs d'audit MySQL
+# 5. Utiliser HTTPS avec reverse proxy (Nginx/Traefik)
+# 6. Rotation automatique des logs
+# 7. Backups réguliers de mysql_data et faiss_index
+#
+

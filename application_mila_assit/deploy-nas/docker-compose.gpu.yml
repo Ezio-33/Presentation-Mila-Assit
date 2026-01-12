@@ -1,0 +1,238 @@
+# ========================================
+# Mila-Assist - Configuration GPU (RTX 4070/4080/4090)
+# ========================================
+# Utiliser avec: docker compose -f docker-compose.gpu.yml up -d
+#
+# Prerequis:
+#   - NVIDIA Driver 545+
+#   - NVIDIA Container Toolkit
+#   - Modele LLM dans modeles/mistral/ ou modeles/llama3/
+
+services:
+  # Base de donnees MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: mila_assist_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: Europe/Paris
+      MYSQL_INITDB_SKIP_TZINFO: 1
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./mysql/02-migration_base_connaissances.sql:/docker-entrypoint-initdb.d/02-migration.sql:ro
+      - ./mysql/02-triggers.sql:/docker-entrypoint-initdb.d/03-triggers.sql:ro
+      - ./log/mysql:/var/log/mysql
+
+    expose:
+      - "3306"
+
+    networks:
+      - mila-network
+
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --default-time-zone=+01:00
+      - --skip-name-resolve
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD", "--silent"]
+      timeout: 5s
+      retries: 20
+      interval: 10s
+      start_period: 120s
+
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1536M
+
+  # Container 2: API FastAPI
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mila_assist_api
+    restart: unless-stopped
+    volumes:
+      - ./log/api:/app/logs
+
+    environment:
+      - TZ=Europe/Paris
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - API_KEY=${API_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
+      - SECRET_KEY=${SECRET_KEY}
+      - LLM_SERVICE_HOST=llm
+      - LLM_SERVICE_PORT=8001
+      - LLM_SERVICE_TIMEOUT=60  # Reduit car GPU rapide
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - PYTHONUNBUFFERED=1
+
+    ports:
+      - "9000:8000"
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+      llm:
+        condition: service_healthy
+
+    networks:
+      - mila-network
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/sante"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Container 3: LLM + FAISS Service (GPU)
+  llm:
+    build:
+      context: ./llm-service
+      dockerfile: Dockerfile.gpu
+    container_name: mila_llm_faiss
+    restart: unless-stopped
+    
+    # Activation GPU NVIDIA
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+        limits:
+          memory: 12G  # Limite memoire RAM
+
+    volumes:
+      - ./modeles:/app/modeles:ro
+      - ./donnees/faiss_index:/app/donnees/faiss_index
+      - ./backups/faiss:/app/backups/faiss
+      - ./cache_huggingface:/app/cache_huggingface
+      - ./log/llm:/app/logs
+
+    environment:
+      - TZ=Europe/Paris
+      # Base de donnees
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      # Cache HuggingFace
+      - HF_HOME=/app/cache_huggingface
+      - TRANSFORMERS_CACHE=/app/cache_huggingface
+      # Embeddings (CPU - petit modele, tres rapide)
+      - EMBEDDINGS_MODEL_NAME=antoinelouis/biencoder-camembert-base-mmarcoFR
+      - EMBEDDINGS_MODEL_PATH=/app/modeles/embeddings
+      - EMBEDDINGS_DIMENSION=768
+      - EMBEDDINGS_MAX_SEQ_LENGTH=256
+      - EMBEDDINGS_BATCH_SIZE=32
+      #- EMBEDDINGS_DEVICE=cpu test avec GPU
+      - EMBEDDINGS_DEVICE=cuda
+      # FAISS
+      - FAISS_INDEX_PATH=/app/donnees/faiss_index/index_faiss.bin
+      - FAISS_BACKUP_PATH=/app/backups/faiss
+      - FAISS_TOP_K=3
+      # LLM - Mistral 7B GPU (changer selon modele)
+      - LLM_MODEL_PATH=/app/modeles/mistral/mistral-7b-instruct-v0.2.Q4_K_M.gguf
+      - LLM_N_CTX=8192
+      - LLM_N_THREADS=8
+      - LLM_MAX_TOKENS=512
+      - LLM_TEMPERATURE=0.3
+      - LLM_TOP_P=0.9
+      - LLM_TOP_K=40
+      - LLM_REPETITION_PENALTY=1.1
+      - LLM_N_BATCH=512
+      - LLM_N_GPU_LAYERS=35  # Toutes les couches sur GPU
+      # Auto-Sync
+      - AUTO_SYNC_INTERVAL=60
+      - AUTO_SYNC_MYSQL_UPTIME_THRESHOLD=300
+      # Environnement
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - PYTHONUNBUFFERED=1
+
+    expose:
+      - "8001"
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - mila-network
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  # phpMyAdmin (optionnel)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: mila_assist_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "18548:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 0
+      UPLOAD_LIMIT: 64M
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - mila-network
+
+networks:
+  mila-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+
+# ========================================
+# UTILISATION
+# ========================================
+#
+# 1. Telecharger le modele:
+#    mkdir -p modeles/mistral
+#    cd modeles/mistral
+#    wget -c "https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/resolve/main/mistral-7b-instruct-v0.2.Q4_K_M.gguf"
+#
+# 2. Demarrer:
+#    docker compose -f docker-compose.gpu.yml up -d
+#
+# 3. Verifier GPU:
+#    docker exec mila_llm_faiss nvidia-smi
+#
+# 4. Performances attendues:
+#    - Temps de reponse: 2-5 secondes
+#    - VRAM utilisee: ~6 Go sur 12 Go
+#
+

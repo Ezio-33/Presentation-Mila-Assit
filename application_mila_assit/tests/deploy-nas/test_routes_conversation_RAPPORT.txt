@@ -1,0 +1,49 @@
+RAPPORT D'EXÉCUTION DES TESTS UNITAIRES
+========================================
+
+## Tests routes_conversation.py
+
+STATUS: ❌ ÉCHEC - Erreurs de configuration
+
+### Problèmes rencontrés:
+
+1. **Endpoint incorrect**
+   - Les tests utilisaient /api/v1/conversation
+   - Le endpoint réel est /api/v1/search
+   - ✓ CORRIGÉ
+
+2. **Format id_session**
+   - Les tests utilisaient des strings arbitraires
+   - L'API exige des UUIDs valides
+   - ✓ CORRIGÉ
+
+3. **Architecture 4 containers: Embedding obligatoire**
+   - L'architecture exige que l'embedding (384 dimensions) soit calculé côté client
+   - Les tests n'incluaient pas d'embedding dans les requêtes
+   - ❌ CORRECTION EN COURS (problèmes de syntaxe JSON lors de l'ajout)
+
+4. **Dépendances manquantes**
+   - pytest, fastapi, pydantic-settings, slowapi, psutil
+   - ✓ TOUTES INSTALLÉES
+
+### Tests à exécuter une fois corrigé:
+
+- test_conversation_valide
+- test_conversation_question_vide
+- test_conversation_question_trop_longue
+- test_conversation_sans_session
+- test_conversation_llm_indisponible
+- test_conversation_injection_sql
+- test_conversation_caracteres_speciaux
+- test_validation_longueur_question (4 variantes)
+- test_temps_reponse_acceptable
+- test_charge_multiple_requetes
+
+### Recommandation:
+
+Recréer le fichier test_routes_conversation.py avec la structure correcte incluant:
+- Endpoint: /api/v1/search
+- UUID valides pour id_session
+- Embedding de 384 dimensions dans chaque payload
+- Mocks corrects pour llm_client et DB
+

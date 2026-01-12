@@ -1,0 +1,13 @@
+# Fichiers de configuration sensibles
+.env
+
+# Résultats de tests
+test-results/
+*.log
+benchmark_results.json
+
+# Fichiers temporaires
+*.tmp
+*.bak
+__pycache__/
+*.pyc

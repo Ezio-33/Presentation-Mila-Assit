@@ -1,0 +1,103 @@
+# ===================================================================
+# Dockerfile.gpu - Mila-Assist LLM + FAISS Service avec support GPU
+# Base: NVIDIA CUDA 12.1 Runtime
+# GPU: NVIDIA RTX 4070 / 4080 / 4090 ou equivalent
+# ===================================================================
+
+FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04
+
+# Metadata
+LABEL maintainer="Mila-Assist <support@mila-assist.local>"
+LABEL description="Service LLM+FAISS avec acceleration GPU CUDA"
+LABEL version="2.0.3-RTX"
+
+# Variables d'environnement
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    PATH="/opt/venv/bin:$PATH" \
+    APP_HOME=/app \
+    TRANSFORMERS_CACHE=/app/cache_huggingface \
+    HF_HOME=/app/cache_huggingface
+
+# Installer les dependances systeme
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.10 \
+    python3.10-venv \
+    python3.10-dev \
+    python3-pip \
+    build-essential \
+    cmake \
+    g++ \
+    gcc \
+    git \
+    wget \
+    curl \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Creer environnement virtuel Python
+RUN python3.10 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copier requirements
+COPY requirements.txt /tmp/requirements.txt
+
+# ============================================================================
+# INSTALLATION DEPENDANCES PYTHON (CORRECTION GPU)
+# ============================================================================
+# 1. Mise a jour pip
+# 2. INSTALLATION TORCH CUDA 12.1 (CRUCIAL POUR RTX 4070)
+#    Ceci remplace la version CPU qui causait l'erreur "Torch not compiled with CUDA"
+# 3. Installation des autres requirements
+# 4. Installation llama-cpp-python optimisé GPU
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install torch==2.2.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 && \
+    pip install -r /tmp/requirements.txt && \
+    pip uninstall -y llama-cpp-python 2>/dev/null || true && \
+    pip install llama-cpp-python \
+        --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121 \
+        --no-cache-dir
+
+# ============================================================================
+
+# Creer l'utilisateur non-root
+RUN groupadd -g 1027 llm && \
+    useradd -u 1027 -g llm -d /app -s /sbin/nologin -c "LLM Service User" llm
+
+# Structure des dossiers
+WORKDIR /app
+RUN mkdir -p \
+    /app/src \
+    /app/modeles/embeddings \
+    /app/modeles/gemma \
+    /app/modeles/mistral \
+    /app/donnees/faiss_index \
+    /app/logs \
+    /app/cache_huggingface
+
+# Copier le code source
+COPY --chown=llm:llm src/ /app/src/
+
+# Version
+RUN echo "2.0.3-gpu-rtx" > /app/VERSION
+
+# Permissions
+RUN chown -R llm:llm /app && \
+    chmod -R 755 /app/src && \
+    chmod -R 777 /app/logs && \
+    chmod -R 777 /app/donnees/faiss_index && \
+    chmod -R 777 /app/cache_huggingface
+
+# Port
+EXPOSE 8001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+    CMD curl -f http://localhost:8001/health || exit 1
+
+# Utilisateur non-root
+USER llm
+
+# Commande de demarrage
+CMD ["uvicorn", "src.llm_server:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "1", "--log-level", "info"]
