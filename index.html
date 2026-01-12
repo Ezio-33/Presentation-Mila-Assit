@@ -90,7 +90,7 @@
                             <td><strong>CamemBERT MS MARCO</strong></td>
                             <td><span class="highlight">✅ Contextuel</span></td>
                             <td><span class="highlight">✅ Spécialisé FR</span></td>
-                            <td><strong>Precision@5 : 92%</strong></td>
+                            <td><strong>Hit Rate : 90%</strong></td>
                         </tr>
                     </table>
                 </div>
@@ -152,7 +152,7 @@ Mot "chat" analyse son contexte :
                         </tr>
                         <tr style="background: rgba(34, 197, 94, 0.1);">
                             <td><strong>CamemBERT MS MARCO</strong></td>
-                            <td><span class="highlight">92% Precision</span></td>
+                            <td><span class="highlight">90% Hit Rate</span></td>
                             <td><span class="highlight">✅ Choisi</span></td>
                         </tr>
                     </table>
@@ -210,7 +210,7 @@ Mot "chat" analyse son contexte :
                 </div>
 
                 <div class="box-success">
-                    <strong>Décision :</strong> Avec 1366 vecteurs, IndexFlatIP offre précision 100% et ~20ms de latence. Pas besoin d'approximation (ANN).
+                    <strong>Décision :</strong> Avec 1366 vecteurs, IndexFlatIP offre précision 100% et ~1.2s de latence. Pas besoin d'approximation (ANN).
                 </div>
             </section>
 
@@ -236,7 +236,7 @@ faiss.normalize_L2(query_vector)  <span class="highlight">⭐</span>
 
                 <div class="box-success">
                     <strong>Résultat :</strong> IndexFlatIP exploite cette optimisation<br>
-                    Recherche en ~20ms parmi 1366 vecteurs
+                    Recherche en ~1.2s parmi 1366 vecteurs
                 </div>
             </section>
 
@@ -274,7 +274,7 @@ faiss.normalize_L2(query_vector)  <span class="highlight">⭐</span>
                                 <div class="arch-box-title" style="color: #22c55e;">Container 3: LLM + FAISS (:8001 interne)</div>
                                 <div class="arch-box-content">
                                     1️⃣ Embedding (si absent): Q → CamemBERT → [768D]<br>
-                                    2️⃣ FAISS Search (~20ms): [768D] → <span class="highlight">index pré-calculé (1366 vecteurs)</span><br>
+                                    2️⃣ FAISS Search (~1.2s): [768D] → <span class="highlight">index pré-calculé (1366 vecteurs)</span><br>
                                     &nbsp;&nbsp;&nbsp;&nbsp;→ top-5 IDs: [42, 15, 89, 50, 87]
                                 </div>
                             </div>
@@ -350,31 +350,32 @@ faiss.normalize_L2(query_vector)  <span class="highlight">⭐</span>
 
             <!-- SLIDE 11: Validation -->
             <section>
-                <h2>Validation : F1-Score</h2>
+                <h2>Validation : Métriques Retrieval</h2>
 
                 <div class="metric-grid">
                     <div class="metric-card">
-                        <div class="metric-value">92%</div>
-                        <div class="metric-label">Precision@5</div>
+                        <div class="metric-value">90%</div>
+                        <div class="metric-label">Hit Rate</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value">98%</div>
-                        <div class="metric-label">Recall@5</div>
+                        <div class="metric-value">85%</div>
+                        <div class="metric-label">MRR</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value">95%</div>
-                        <div class="metric-label">F1-Score</div>
+                        <div class="metric-value">77.7%</div>
+                        <div class="metric-label">Confiance Moy.</div>
                     </div>
                 </div>
 
                 <div class="formula">
-F1 = 2 × (Precision × Recall) / (Precision + Recall)
+Hit Rate = Questions avec ≥1 réponse pertinente dans top-5
 <br><br>
-F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
+MRR = Mean Reciprocal Rank (position 1ère bonne réponse)
                 </div>
 
                 <div class="box">
-                    <strong>F1-Score :</strong> Moyenne harmonique qui équilibre qualité (92%) et couverture (98%)<br>
+                    <strong>Hit Rate :</strong> 90% des questions trouvent au moins 1 réponse pertinente<br>
+                    <strong>MRR :</strong> 85% indique que les bonnes réponses sont bien positionnées<br>
                     <strong>Objectif dépassé :</strong> &gt; 85% requis
                 </div>
             </section>
@@ -387,7 +388,7 @@ F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
                     <div>
                         <h3 style="color: #22c55e;">✅ Succès</h3>
                         <ul class="bullet-list">
-                            <li class="success">Precision 92% (&gt;85% objectif)</li>
+                            <li class="success">Hit Rate 90% (&gt;85% objectif)</li>
                             <li class="success">Quantization Q4 viable</li>
                             <li class="success">Architecture hybride scalable</li>
                             <li class="success">Docker stable en production</li>
@@ -440,16 +441,16 @@ F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
 
                 <div class="metric-grid" style="max-width: 600px; margin: 15px auto; gap: 10px;">
                     <div class="metric-card" style="padding: 12px;">
-                        <div class="metric-value" style="font-size: 1.8em;">95%</div>
-                        <div class="metric-label" style="font-size: 0.75em;">F1-Score</div>
+                        <div class="metric-value" style="font-size: 1.8em;">90%</div>
+                        <div class="metric-label" style="font-size: 0.75em;">Hit Rate</div>
                     </div>
                     <div class="metric-card" style="padding: 12px;">
-                        <div class="metric-value" style="font-size: 1.8em;">~20ms</div>
+                        <div class="metric-value" style="font-size: 1.8em;">~1.2s</div>
                         <div class="metric-label" style="font-size: 0.75em;">FAISS</div>
                     </div>
                     <div class="metric-card" style="padding: 12px;">
-                        <div class="metric-value" style="font-size: 1.8em;">100%</div>
-                        <div class="metric-label" style="font-size: 0.75em;">Objectifs</div>
+                        <div class="metric-value" style="font-size: 1.8em;">85%</div>
+                        <div class="metric-label" style="font-size: 0.75em;">MRR</div>
                     </div>
                 </div>
 
@@ -461,7 +462,7 @@ F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
                         <li>Recherche vectorielle : FAISS exhaustif</li>
                         <li>Optimisation : Normalisation L2</li>
                         <li>Quantization : Q4 (85% réduction)</li>
-                        <li>Métriques : F1-Score (équilibre)</li>
+                        <li>Métriques : Hit Rate 90%, MRR 85%</li>
                     </ul>
                 </div>
 
@@ -477,16 +478,16 @@ F1 = 2 × (0.92 × 0.98) / (0.92 + 0.98) = <span class="highlight">95%</span>
 
                 <div class="metric-grid" style="max-width: 600px; margin: 60px auto; font-size: 0.9em;">
                     <div class="metric-card">
-                        <div class="metric-value" style="font-size: 1.5em;">768D</div>
-                        <div class="metric-label">CamemBERT</div>
+                        <div class="metric-value" style="font-size: 1.5em;">90%</div>
+                        <div class="metric-label">Hit Rate</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value" style="font-size: 1.5em;">~20ms</div>
+                        <div class="metric-value" style="font-size: 1.5em;">85%</div>
+                        <div class="metric-label">MRR</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 1.5em;">~1.2s</div>
                         <div class="metric-label">FAISS</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" style="font-size: 1.5em;">Q4</div>
-                        <div class="metric-label">Quantization</div>
                     </div>
                 </div>
 
