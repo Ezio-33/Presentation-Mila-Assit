@@ -163,21 +163,23 @@
 
 > "Le prompt systeme utilise le format Instruct avec les balises [INST] et [/INST]. Le code se trouve dans `generateur_llm.py` ligne 97.
 >
-> J'ai du construire ce prompt par iterations pour obtenir des reponses coherentes. Deux regles critiques : la langue obligatoire francais car le modele tendait a repondre en anglais, et l'interdiction stricte d'inventer des URLs car le modele generait des liens fictifs.
->
-> Les parametres importants : temperature basse a 0.3 pour des reponses focalisees, top-p a 0.9 et top-k a 40 pour la diversite, et maximum 512 tokens en sortie."
+> J'ai du construire ce prompt par iterations pour obtenir des reponses coherentes. Deux regles critiques : la langue obligatoire francais car le modele tendait a repondre en anglais, et l'interdiction stricte d'inventer des URLs car le modele generait des liens fictifs."
 
 ---
 
-## SLIDE 14 : Fenetre de Contexte (1 minute)
+## SLIDE 14 : Fenetre de Contexte & Parametres (1 minute 30)
 
 ### CE QUE VOUS DITES
 
-> "La fenetre de contexte est de 4096 tokens, mais l'architecture est **stateless**.
+> "L'architecture est **stateless**, l'historique de conversation n'est PAS inclus dans le contexte.
 >
-> Ca signifie que l'historique de conversation n'est PAS inclus dans le contexte. Chaque requete est independante et contient : le prompt systeme d'environ 200 tokens, les 5 documents FAISS de 800 a 1500 tokens, la question utilisateur de 50 tokens environ, et la reponse generee de maximum 512 tokens.
+> Les parametres cles du SLM :
+> - **N_CTX = 4096** : taille du contexte, combien de tokens le modele peut voir
+> - **MAX_TOKENS = 512** : limite de tokens generes en sortie
+> - **TEMPERATURE = 0.3** : creativite basse, reponses focalisees
+> - **REPETITION_PENALTY = 1.3** : penalite pour eviter les repetitions
 >
-> Au total, j'utilise environ 2000 a 2500 tokens sur les 4096 disponibles. Ce choix est volontaire pour simplifier l'architecture."
+> Au total, j'utilise environ 2000 a 2500 tokens sur les 4096 disponibles."
 
 ---
 
