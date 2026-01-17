@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mila-Assist - DemoDay 2026</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/night.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- SLIDE 1: Titre Accrocheur -->
+            <section class="center">
+                <h1 style="font-size: 3.5em;">MILA-ASSIST</h1>
+                <h3 style="color: #a5b4fc; font-size: 1.5em;">L'IA qui repond a vos questions... intelligemment</h3>
+                <div style="margin-top: 50px;">
+                    <p style="font-size: 1.2em;"><strong>Samuel VERSCHUEREN</strong></p>
+                    <p class="small-text">DemoDay 2026</p>
+                </div>
+                <div style="margin-top: 40px; font-size: 0.9em; color: #94a3b8;">
+                    <em>"Un chatbot qui comprend vraiment ce que vous demandez"</em>
+                </div>
+            </section>
+
+            <!-- SLIDE 2: Le Probleme -->
+            <section>
+                <h2>Le Probleme</h2>
+
+                <div class="box-warning" style="font-size: 1.1em;">
+                    <strong>Situation de depart :</strong><br>
+                    Une plateforme innovante... mais un support technique deborde
+                </div>
+
+                <div class="two-columns" style="margin-top: 30px;">
+                    <div>
+                        <h3 style="color: #ef4444;">Avant Mila-Assist</h3>
+                        <ul class="bullet-list">
+                            <li style="color: #ef4444;">Support humain 100%</li>
+                            <li style="color: #ef4444;">Temps de reponse : heures</li>
+                            <li style="color: #ef4444;">Questions repetitives</li>
+                            <li style="color: #ef4444;">Disponibilite limitee</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #22c55e;">Avec Mila-Assist</h3>
+                        <ul class="bullet-list">
+                            <li class="success">Reponse instantanee 24/7</li>
+                            <li class="success">Comprehension intelligente</li>
+                            <li class="success">1366 questions couvertes</li>
+                            <li class="success">Support humain libere</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: AI_licia - Le Contexte -->
+            <section>
+                <h2>AI_licia : La Plateforme</h2>
+
+                <div class="box" style="font-size: 1.1em;">
+                    <strong>AI_licia</strong> permet aux streamers de creer leur propre IA :<br>
+                    <ul style="margin-top: 15px; padding-left: 25px;">
+                        <li>Voix personnalisee</li>
+                        <li>Apparence unique</li>
+                        <li>Comportement configurable</li>
+                        <li>Interaction automatique avec les viewers</li>
+                    </ul>
+                </div>
+
+                <div class="box-success" style="margin-top: 25px; font-size: 1.1em;">
+                    <strong>MILA-ASSIST</strong> = Le support technique intelligent<br>
+                    <span style="font-size: 0.9em; color: #94a3b8;">Installation, configuration, personnalisation, depannage</span>
+                </div>
+
+                <div class="metric-grid" style="margin-top: 25px;">
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 2em;">1366</div>
+                        <div class="metric-label">Questions couvertes</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 2em;">24/7</div>
+                        <div class="metric-label">Disponibilite</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 2em;">&lt;2s</div>
+                        <div class="metric-label">Temps de reponse</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: Mon Parcours -->
+            <section>
+                <h2>Mon Parcours sur ce Projet</h2>
+
+                <div class="visual-diagram" style="font-size: 0.8em;">
+<pre>
+TIMELINE DU PROJET
+==================
+
+Mois 1-2 : EXPLORATION
+-----------------------
+- Etude des solutions existantes (ChatGPT, Claude...)
+- Probleme : Cout API + RGPD + Hallucinations
+- Decision : Construire en local avec RAG
+
+Mois 3-4 : DEVELOPPEMENT
+------------------------
+- Architecture 4 containers Docker
+- Integration CamemBERT + FAISS + Gemma
+- Iterations sur le prompt engineering
+
+Mois 5 : OPTIMISATION & TESTS
+-----------------------------
+- Quantization Q4 pour reduire la RAM
+- Hit Rate : 72% -> 85% -> <span class="highlight">90%</span>
+- Deploiement sur NAS Synology
+</pre>
+                </div>
+            </section>
+
+            <!-- SLIDE 5: Le Defi Technique (simplifie) -->
+            <section>
+                <h2>Le Defi : Comprendre les Questions</h2>
+
+                <div class="box-warning">
+                    <strong>Probleme :</strong> Comment faire comprendre le contexte a une machine ?
+                </div>
+
+                <div class="visual-diagram" style="margin-top: 20px;">
+<pre>
+Utilisateur : "Mon PC rame avec le TTS"
+
+Chatbot classique (mots-cles) :
+  "PC" -> ordinateur
+  "rame" -> ??? pagaie de bateau ???
+  "TTS" -> ???
+  -> Resultat : confusion totale
+
+<span class="highlight">Mila-Assist (comprehension contextuelle) :</span>
+  "PC" + "rame" + "TTS" dans le meme contexte
+  -> "rame" = lenteur informatique
+  -> "TTS" = Text-to-Speech d'AI_licia
+  -> Resultat : Solution de performance
+</pre>
+                </div>
+
+                <div class="box-success" style="margin-top: 15px;">
+                    <strong>Solution :</strong> Intelligence Artificielle avec comprehension semantique
+                </div>
+            </section>
+
+            <!-- SLIDE 6: Comment ca marche (vulgarise) -->
+            <section>
+                <h2>Comment ca Marche ?</h2>
+
+                <div class="visual-diagram" style="font-size: 0.75em;">
+<pre>
+                        MILA-ASSIST : LE PROCESSUS
+                        ==========================
+
+    VOUS                                          MILA
+     |                                              |
+     |  "Comment configurer le TTS ?"               |
+     |  ---------------------------------->         |
+     |                                              |
+     |           1. COMPRENDRE                      |
+     |           La question devient un             |
+     |           "code secret" numerique            |
+     |           (embedding 768 dimensions)         |
+     |                                              |
+     |           2. CHERCHER                        |
+     |           Mila cherche dans sa memoire       |
+     |           les 5 questions les plus proches   |
+     |           (recherche FAISS ultra-rapide)     |
+     |                                              |
+     |           3. REPONDRE                        |
+     |           L'IA formule une reponse           |
+     |           naturelle et complete              |
+     |                                              |
+     |  <----------------------------------         |
+     |  "Pour configurer le TTS, allez dans..."     |
+     |                                              |
+</pre>
+                </div>
+            </section>
+
+            <!-- SLIDE 7: L'Architecture (visuel simple) -->
+            <section>
+                <h2>L'Architecture</h2>
+
+                <div class="visual-diagram" style="font-size: 0.7em;">
+<pre>
++------------------+          +----------------------------------------+
+|                  |          |         SERVEUR NAS (local)            |
+|   UTILISATEUR    |          |                                        |
+|                  |   --->   |   +----------+    +----------------+   |
+|  Application     |          |   |          |    |                |   |
+|  Bureau PyQt5    |          |   |   API    |--->|  Intelligence  |   |
+|                  |          |   |          |    |  Artificielle  |   |
++------------------+          |   +----------+    |                |   |
+                              |        |          | - Comprehension|   |
++------------------+          |        |          | - Recherche    |   |
+|                  |          |        v          | - Generation   |   |
+|   UTILISATEUR    |   --->   |   +----------+    +----------------+   |
+|                  |          |   |          |           |             |
+|  Interface Web   |          |   |  MySQL   |<----------+             |
+|                  |          |   |  1366 QA |                         |
++------------------+          |   +----------+                         |
+                              +----------------------------------------+
+
+                              Hebergement : NAS Synology (local, RGPD OK)
+                              Cout mensuel API : 0 EUR
+</pre>
+                </div>
+            </section>
+
+            <!-- SLIDE 8: Les Chiffres Cles -->
+            <section class="center">
+                <h2>Les Resultats</h2>
+
+                <div class="metric-grid" style="max-width: 900px; margin: 40px auto;">
+                    <div class="metric-card">
+                        <div class="metric-value">90%</div>
+                        <div class="metric-label">Taux de reussite</div>
+                        <span style="font-size: 0.75em; color: #94a3b8; display: block; margin-top: 5px;">9 questions sur 10 trouvent une reponse pertinente</span>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">85%</div>
+                        <div class="metric-label">Qualite du classement</div>
+                        <span style="font-size: 0.75em; color: #94a3b8; display: block; margin-top: 5px;">La bonne reponse est presque toujours en 1ere position</span>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">&lt;2s</div>
+                        <div class="metric-label">Temps de reponse</div>
+                        <span style="font-size: 0.75em; color: #94a3b8; display: block; margin-top: 5px;">Pipeline complet : recherche + generation</span>
+                    </div>
+                </div>
+
+                <div class="box-success" style="max-width: 700px; margin: 30px auto;">
+                    <strong>Objectif depasse :</strong> 90% vs 85% requis<br>
+                    <span style="font-size: 0.9em;">Mesure sur 20 questions de test en conditions reelles</span>
+                </div>
+            </section>
+
+            <!-- SLIDE 9: Ce qui me rend fier -->
+            <section>
+                <h2>Ce qui me Rend Fier</h2>
+
+                <div class="two-columns">
+                    <div>
+                        <h3 style="color: #22c55e;">Realisations</h3>
+                        <ul class="bullet-list">
+                            <li class="success">Systeme fonctionnel en production</li>
+                            <li class="success">Zero dependance cloud</li>
+                            <li class="success">Conforme RGPD (donnees locales)</li>
+                            <li class="success">Architecture scalable</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #6366f1;">Competences acquises</h3>
+                        <ul class="bullet-list">
+                            <li>Machine Learning applique (NLP)</li>
+                            <li>Architecture microservices</li>
+                            <li>Docker & deploiement</li>
+                            <li>Optimisation memoire (quantization)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top: 30px;">
+                    <strong>Le plus grand defi resolu :</strong><br>
+                    Faire tourner une IA complete sur un NAS de 8 GB RAM sans GPU
+                </div>
+            </section>
+
+            <!-- SLIDE 10: Les Defis Rencontres -->
+            <section>
+                <h2>Les Defis Rencontres</h2>
+
+                <div class="comparison-table">
+                    <table>
+                        <tr>
+                            <th>Defi</th>
+                            <th>Probleme</th>
+                            <th>Solution</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Memoire limitee</strong></td>
+                            <td>8 GB RAM pour tout le systeme</td>
+                            <td>Quantization Q4 : -85% memoire</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pas de GPU</strong></td>
+                            <td>Inference lente sur CPU</td>
+                            <td>Format GGUF optimise CPU</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Reponses en anglais</strong></td>
+                            <td>Le modele melangeait les langues</td>
+                            <td>Prompt strict "Francais ONLY"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>URLs inventees</strong></td>
+                            <td>Le modele generait des liens fictifs</td>
+                            <td>Regle absolue dans le prompt</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="box-success" style="margin-top: 20px;">
+                    <strong>Chaque probleme = une opportunite d'apprentissage</strong>
+                </div>
+            </section>
+
+            <!-- SLIDE 11: Demonstration Teaser -->
+            <section class="center">
+                <h2>Demonstration</h2>
+
+                <div style="font-size: 1.5em; margin: 40px 0; color: #a5b4fc;">
+                    <em>Voyons Mila-Assist en action...</em>
+                </div>
+
+                <div class="box" style="max-width: 700px; margin: 30px auto; text-align: left;">
+                    <strong>Tests que je vais effectuer :</strong><br><br>
+                    1. <span class="highlight">Question simple</span> : "Comment installer AI_licia ?"<br><br>
+                    2. <span class="accent">Comprehension semantique</span> : "Mon PC rame avec le TTS"<br>
+                    <span style="font-size: 0.85em; color: #94a3b8;">(Le systeme doit comprendre que "rame" = lenteur)</span><br><br>
+                    3. <span style="color: #ef4444;">Question hors-sujet</span> : "Quelle est la capitale de la France ?"<br>
+                    <span style="font-size: 0.85em; color: #94a3b8;">(Le systeme doit indiquer qu'il ne sait pas)</span>
+                </div>
+            </section>
+
+            <!-- SLIDE 12: Demo Live -->
+            <section class="center">
+                <h2>Demo Live</h2>
+
+                <div class="box-success" style="font-size: 1.3em; margin-top: 40px;">
+                    <strong>Interface Web de Test</strong><br>
+                    <a href="http://185.246.86.162:8080" target="_blank" class="demo-link" style="font-size: 1.1em;">http://185.246.86.162:8080</a>
+                </div>
+
+                <div class="box" style="margin-top: 30px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    <strong>Page d'evaluation des metriques</strong><br>
+                    <a href="http://185.246.86.162:9000/api/v1/admin/evaluation?sample=20" target="_blank" class="demo-link" style="font-size: 0.9em;">http://185.246.86.162:9000/api/v1/admin/evaluation?sample=20</a><br>
+                    <span style="font-size: 0.8em; color: #94a3b8;">Teste 20 questions et affiche les metriques en temps reel</span>
+                </div>
+
+                <div style="margin-top: 50px;">
+                    <img src="img/demo_screenshot.png" alt="Screenshot Demo" style="max-width: 80%; border-radius: 12px; border: 2px solid #475569;" onerror="this.style.display='none'">
+                </div>
+            </section>
+
+            <!-- SLIDE 13: Perspectives d'Evolution -->
+            <section>
+                <h2>Et Apres ?</h2>
+
+                <div class="two-columns">
+                    <div>
+                        <h3 style="color: #22c55e;">Court terme</h3>
+                        <ul class="bullet-list">
+                            <li class="success">Interface utilisateur amelioree</li>
+                            <li class="success">Plus de questions dans la base</li>
+                            <li class="success">Historique de conversation</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #6366f1;">Long terme</h3>
+                        <ul class="bullet-list">
+                            <li>Support vocal (STT + TTS)</li>
+                            <li>Multi-langues</li>
+                            <li>Apprentissage continu</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="box-success" style="margin-top: 40px;">
+                    <strong>Vision :</strong> Un assistant intelligent qui evolue avec les besoins des utilisateurs
+                </div>
+            </section>
+
+            <!-- SLIDE 14: Ce que j'ai appris -->
+            <section>
+                <h2>Ce que j'ai Appris</h2>
+
+                <div class="metric-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 1.5em;">Machine Learning</div>
+                        <div class="metric-label" style="font-size: 0.9em;">Embeddings, Transformers, RAG</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 1.5em;">Architecture</div>
+                        <div class="metric-label" style="font-size: 0.9em;">Microservices, Docker, APIs</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 1.5em;">Optimisation</div>
+                        <div class="metric-label" style="font-size: 0.9em;">Quantization, Edge Computing</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 1.5em;">Gestion de Projet</div>
+                        <div class="metric-label" style="font-size: 0.9em;">Iterations, Tests, Deploiement</div>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top: 30px;">
+                    <strong>Lecon principale :</strong><br>
+                    Un bon produit se construit par iterations. Ma premiere version avait 72% de reussite,<br>
+                    la version finale atteint 90% grace aux ajustements successifs.
+                </div>
+            </section>
+
+            <!-- SLIDE 15: Conclusion -->
+            <section class="center">
+                <h2>Conclusion</h2>
+
+                <div class="metric-grid" style="max-width: 700px; margin: 30px auto;">
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 2em;">90%</div>
+                        <div class="metric-label">Taux de reussite</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 2em;">0 EUR</div>
+                        <div class="metric-label">Cout API</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size: 2em;">24/7</div>
+                        <div class="metric-label">Disponible</div>
+                    </div>
+                </div>
+
+                <div class="box" style="max-width: 800px; margin: 30px auto; text-align: center;">
+                    <strong>MILA-ASSIST demontre qu'il est possible de :</strong><br><br>
+                    Creer une IA performante, hebergee localement,<br>
+                    sans cout d'API, conforme RGPD,<br>
+                    sur du materiel accessible.
+                </div>
+
+                <p style="margin-top: 40px; font-size: 1.1em; color: #a5b4fc;">
+                    <em>"L'intelligence artificielle au service de l'utilisateur,<br>
+                    pas l'inverse."</em>
+                </p>
+            </section>
+
+            <!-- SLIDE 16: Questions -->
+            <section class="center">
+                <h1 style="font-size: 4em;">Questions ?</h1>
+
+                <div style="margin-top: 60px;">
+                    <p style="font-size: 1.2em;"><strong>Samuel VERSCHUEREN</strong></p>
+                    <p class="small-text" style="margin-top: 30px;">
+                        Demo : <a href="http://185.246.86.162:8080" class="demo-link">http://185.246.86.162:8080</a><br>
+                        Code : deploy-nas/ + client/
+                    </p>
+                </div>
+
+                <div class="metric-grid" style="max-width: 500px; margin: 50px auto;">
+                    <div class="metric-card" style="padding: 15px;">
+                        <div class="metric-value" style="font-size: 1.3em;">90%</div>
+                        <div class="metric-label">Reussite</div>
+                    </div>
+                    <div class="metric-card" style="padding: 15px;">
+                        <div class="metric-value" style="font-size: 1.3em;">&lt;2s</div>
+                        <div class="metric-label">Reponse</div>
+                    </div>
+                    <div class="metric-card" style="padding: 15px;">
+                        <div class="metric-value" style="font-size: 1.3em;">1366</div>
+                        <div class="metric-label">Questions</div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            showSlideNumber: 'all',
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            center: false,
+            progress: true,
+            controls: true,
+            keyboard: true,
+            overview: true,
+            touch: true,
+            width: 1280,
+            height: 720,
+            margin: 0.04,
+            minScale: 0.2,
+            maxScale: 2.0
+        });
+    </script>
+</body>
+</html>
