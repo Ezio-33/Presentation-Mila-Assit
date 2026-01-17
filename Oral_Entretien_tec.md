@@ -1,279 +1,222 @@
 # SCRIPT ORAL - ENTRETIEN TECHNIQUE ML 2026
 
-**Duree** : ~20 minutes
+**Duree** : ~25 minutes
 **Fichier presentation** : `Presentation_technique.html`
 
 ---
 
 ## SLIDE 1 : Titre (30 secondes)
 
-### CE QUE VOUS DITES
-
-> "Bonjour, je m'appelle Samuel Verschueren. Je vais vous presenter Mila-Assist, un chatbot de support technique base sur une architecture RAG.
->
+> "Bonjour, je m'appelle Samuel Verschueren. Je vais vous presenter Mila-Assist, un chatbot de support technique.
+> 
 > Cette presentation se concentre sur les aspects Machine Learning du projet : le pipeline de tokenisation, les embeddings contextuels, la recherche vectorielle FAISS, et le SLM quantifie."
 
 ---
 
 ## SLIDE 2 : Projet & Contexte (1 minute)
 
-### CE QUE VOUS DITES
-
 > "AI_licia est une plateforme web pour streamers permettant de creer une IA personnalisee qui interagit automatiquement avec les viewers.
->
+> 
 > Mila-Assist est le systeme de support technique pour cette plateforme. Il repond aux questions des utilisateurs sur l'installation, la configuration et l'utilisation.
->
-> J'ai quatre contraintes majeures : hebergement local sur un NAS, precision superieure a 85%, zero cout d'API externe, et conformite RGPD."
 
 ---
 
 ## SLIDE 3 : Pipeline RAG - Vue d'ensemble (1 minute 30)
 
-### CE QUE VOUS DITES
-
 > "Le pipeline RAG se decompose en deux phases distinctes.
->
+> 
 > **Phase d'indexation**, executee une seule fois : chaque document passe par la tokenisation, puis l'embedding avec CamemBERT, et enfin le stockage dans l'index FAISS.
->
+> 
 > **Phase d'inference**, a chaque requete : la question utilisateur suit le meme chemin de tokenisation et embedding, puis FAISS retourne les 5 documents les plus similaires. Ces documents servent de contexte au SLM qui genere la reponse finale.
->
-> L'avantage majeur du RAG : le modele ne peut pas halluciner car il reformule uniquement le contexte fourni par FAISS."
 
 ---
 
 ## SLIDE 4 : Indexation - Les 3 Etapes (2 minutes)
 
-### CE QUE VOUS DITES
-
 > "L'indexation comprend trois etapes critiques. La premiere est le **chunking**, c'est-a-dire comment decouper les documents.
->
+> 
 > J'ai evalue trois strategies. Le chunking par taille fixe decoupe en blocs de N tokens, mais risque de couper des phrases importantes. Le chunking semantique decoupe par paragraphes, plus intelligent mais complexe.
->
-> J'ai choisi l'approche **document-level** : une paire question-reponse egale un vecteur. Pourquoi ? Ma base contient 1366 paires Q&A courtes et autonomes. Chunker ces paires couperait le contexte necessaire au Self-Attention du modele.
->
-> Concretement dans le code, je concatene la question et la reponse : `texte = f"{question} {reponse}"` et ca devient un embedding de 768 dimensions."
+> 
+> J'ai choisi l'approche **document-level** : une paire question-reponse egale un vecteur. Pourquoi ? Ma base contient peu de Q&R courtes. Chunker ces paires couperait le contexte necessaire au Self-Attention du modele.
 
 ---
 
 ## SLIDE 5 : Tokenisation (2 minutes)
 
-### CE QUE VOUS DITES
-
-> "On n'embede pas des phrases directement. Le processus correct est tokenisation, puis embedding token par token, puis pooling.
->
-> Prenons l'exemple 'Comment configurer le TTS ?'. D'abord, le tokenizer SentencePiece decoupe en tokens : 'Comment', 'configurer', 'le', 'TTS', '?'.
->
-> Ensuite, chaque token passe par les couches du Transformer et obtient un embedding individuel. Enfin, le Mean Pooling fait la moyenne de tous ces embeddings pour obtenir le vecteur final de 768 dimensions.
->
+> "On tokenisation, puis on embed token par token, puis **pooling**.
+> 
+> Prenons l'exemple 'Comment configurer le TTS ?'. D'abord, le tokenizer **SentencePiece** decoupe en tokens : 'Comment', 'configurer', 'le', 'TTS', '?'.
+> 
+> Ensuite, chaque token passe par les couches du Transformer et obtient un embedding individuel. Enfin, le **Mean Pooling** fait la moyenne de tous ces embeddings pour obtenir le vecteur final de 768 dimensions.
+> 
 > C'est ce vecteur final qui est stocke dans FAISS et utilise pour la recherche de similarite."
 
 ---
 
 ## SLIDE 6 : Embedding CamemBERT (1 minute 30)
 
-### CE QUE VOUS DITES
-
-> "Pour l'embedding, j'utilise le modele `antoinelouis/biencoder-camembert-base-mmarcoFR`. C'est CamemBERT, le BERT francais de Facebook, avec un fine-tuning sur le dataset MS MARCO en francais.
->
+> "Pour l'embedding, j'utilise le modele camembert  avec un fine-tuning sur le dataset MS MARCO en francais.
+> 
 > J'ai compare plusieurs alternatives. Word2Vec est statique, le mot 'chat' aura toujours le meme vecteur que ce soit un animal ou une discussion Twitch. MiniLM multilingue dilue sa capacite sur 50 langues.
->
+> 
 > CamemBERT MS MARCO concentre ses 110 millions de parametres sur le francais et est optimise pour la recherche semantique. C'est le meilleur compromis pour mon cas d'usage avec un Hit Rate de 90%."
 
 ---
 
 ## SLIDE 7 : Self-Attention (1 minute 30)
 
-### CE QUE VOUS DITES
-
 > "Le Self-Attention est le mecanisme cle qui permet la comprehension contextuelle.
->
-> Prenons 'AI_licia repond dans le chat pendant le stream'. Le mot 'chat' calcule un score d'attention pour chaque autre mot. Il prete une attention moderee a 'repond' avec 0.65, mais une **tres forte attention** a 'stream' avec 0.88.
->
+> 
+> Prenons :
+> 'AI_licia repond dans le chat pendant le stream'.
+> 
+> Le mot 'chat' calcule un score d'attention pour chaque autre mot. 
+> 
+> Il prete une attention moderee a '**répond**', mais une **tres forte attention** a 'stream'.
+> 
 > Cette forte attention a 'stream' indique au modele que 'chat' designe une discussion Twitch, pas un animal. C'est la force du Self-Attention : comprendre le sens par le contexte.
->
-> CamemBERT utilise 12 tetes d'attention en parallele. 768 dimensions divisees par 12 tetes egale 64 dimensions par tete."
-
----
 
 ## SLIDE 8 : Alternatives Evaluees (1 minute)
 
-### CE QUE VOUS DITES
-
 > "J'ai evalue plusieurs alternatives pour les embeddings.
->
-> Word2Vec perd le contexte car les embeddings sont statiques. MiniLM multilingue est leger mais moins precis pour le francais. OpenAI ada-002 est excellent mais pose des problemes de cout et RGPD.
->
-> CamemBERT MS MARCO offre la meilleure precision pour le francais, zero cout API, et conformite RGPD. C'est donc mon choix final."
+> 
+> Word2Vec perd le contexte car les embeddings sont statiques. MiniLM multilingue est leger mais moins precis pour le francais. OpenAI est excellent mais pose des problemes de cout et de souveraineté des données.
+> 
+> CamemBERT MS MARCO offre la meilleure precision pour le francais, zero cout API, et nous somme souveraint de nos données. C'est donc pour moi le choix idéal."
 
 ---
 
 ## SLIDE 9 : FAISS - Recherche Vectorielle (1 minute 30)
 
-### CE QUE VOUS DITES
-
 > "Pour la recherche vectorielle, j'utilise FAISS de Facebook avec un index IndexFlatIP.
->
-> Pourquoi IndexFlatIP ? C'est une recherche exhaustive, donc precision 100%, mais en complexite O(n). Avec mes 1366 vecteurs, ca reste tres rapide.
->
-> Les alternatives comme IndexIVFFlat ou IndexHNSW sont plus rapides sur de gros volumes mais perdent 2 a 5% de precision. Pour moins de 10 000 vecteurs, IndexFlatIP est optimal.
->
-> Je n'ai pas besoin d'approximation ANN car ma base est petite."
+> 
+> Pourquoi IndexFlatIP ? C'est une recherche exhaustive, donc precision 100%. Avec mes une base de connaissance avec peu de vecteur comme moi, ca reste tres rapide.
+> 
+> Les alternatives comme IndexIVFFlat ou IndexHNSW sont plus rapides sur de gros volumes mais perdent en precision. Pour moins de 10 000 vecteurs, IndexFlatIP est optimal.
+> 
+> "
 
 ---
 
 ## SLIDE 10 : Similarite Cosinus (1 minute)
 
-### CE QUE VOUS DITES
-
-> "Une optimisation importante : j'utilise le produit scalaire sur des vecteurs normalises L2, ce qui est mathematiquement equivalent a la similarite cosinus mais plus rapide a calculer.
->
-> Cote client, j'utilise `normalize_embeddings=True` dans le model.encode. Cote serveur, j'applique `faiss.normalize_L2` sur le vecteur de requete.
->
-> IndexFlatIP exploite cette optimisation. La recherche prend environ 1.2 secondes parmi 1366 vecteurs."
+> "La similarité entre vecteurs est calculée avec le produit scalaire sur des vecteurs normalisés L2.
+> 
+> La normalisation L2 transforme chaque vecteur en vecteur unitaire de norme 1. Après normalisation, le produit scalaire est mathématiquement équivalent à la similarité cosinus, mais beaucoup plus rapide à calculer.
+> 
+> Cette optimisation permet d'obtenir un temps de recherche d'environ 1.2 secondes pour comparer avec toute ma base de connaissances.
+> 
+> Le score retourné est entre 0 et 1 : plus le score est proche de 1, plus les deux phrases sont sémantiquement similaires.
 
 ---
 
 ## SLIDE 11 : SLM Gemma-2B (1 minute 30)
 
-### CE QUE VOUS DITES
-
-> "Precision terminologique importante : j'utilise un **SLM**, Small Language Model, pas un LLM. Gemma-2-2B a 2 milliards de parametres contre 70 milliards ou plus pour un vrai LLM comme GPT-4.
->
-> Gemma-2 est le modele open-source de Google, licence Apache 2.0. La version IT signifie Instruction Tuned, donc optimisee pour suivre des instructions. Q4 indique la quantization 4 bits.
->
+> " j'utilise le **SLM**, Small Language Model, Gemma-2-2B a 2 milliards de parametres.
+> 
+> Gemma-2 est le modele open-source de Google. La version IT signifie Instruction Tuned, donc optimisee pour suivre des instructions. Q4 indique la quantization 4 bits.
+> 
 > Pourquoi un si petit modele suffit-il ? Pour du RAG, le modele n'a pas besoin de connaissances internes. Il reformule simplement le contexte fourni par FAISS. Un SLM de 2 milliards de parametres est amplement suffisant pour cette tache."
 
 ---
 
 ## SLIDE 12 : Quantization Q4 & GGUF (1 minute 30)
 
-### CE QUE VOUS DITES
-
-> "La quantization Q4 reduit chaque parametre de 32 bits a 4 bits. Calcul simple : 32 divise par 4 egale 8, donc 8 fois moins de memoire. En pratique, environ 85% de reduction RAM.
->
-> Normalement, quantifier degrade la qualite de 5 a 10%. Mais pour du RAG, le SLM reformule un contexte fourni, il ne genere pas librement. La perte est compensee par la precision du contexte. En pratique, degradation de 0 a 2%, negligeable.
->
-> Le format GGUF est specifique a llama.cpp, optimise pour l'inference CPU. Mon NAS actuel a 12 Go de RAM et une RTX 3060. Au debut du projet, je n'avais que 6 Go sans GPU, donc GGUF etait indispensable."
+> "La quantization Q4 reduit chaque parametre de 32 bits a 4 bits. Cela permet donc d'utiliser 8 fois moins de memoire. En pratique, environ 85% de reduction RAM.
+> 
+> Normalement, quantifier degrade la qualite. Mais pour du RAG, le SLM reformule un contexte fourni, il ne genere pas librement. La perte est compensee par la precision du contexte. 
+> 
+> GGUF est le format natif de llama.cpp. Il permet une inference efficace avec quantification, que ce soit sur CPU ou GPU avec CUDA. Au debut du projet sans GPU, c'etait le seul moyen viable de faire tourner un modele de 2 milliards de parametres."
 
 ---
 
-## SLIDE 13 : Prompt Systeme (1 minute)
+## SLIDE 13 : Prompt Systeme (30 secondes)
 
-### CE QUE VOUS DITES
-
-> "Le prompt systeme utilise le format Instruct avec les balises [INST] et [/INST]. Le code se trouve dans `generateur_llm.py` lignes 98 a 153.
->
-> J'ai du construire ce prompt par iterations pour obtenir des reponses coherentes. Deux regles critiques : la langue obligatoire francais car le modele tendait a repondre en anglais, et l'interdiction stricte d'inventer des URLs car le modele generait des liens fictifs."
+> "Le prompt utilise le format Instruct. Deux regles critiques construites par iterations : francais obligatoire et interdiction d'inventer des URLs."
 
 ---
 
-## SLIDE 14 : Prompt Systeme 2/2 & Parametres (1 minute 30)
+## SLIDE 14 : Prompt Systeme 2/2 & Parametres (30 secondes)
 
-### CE QUE VOUS DITES
-
-> "Suite du prompt avec les instructions et interdictions sur les URLs.
->
-> Les parametres cles du SLM :
-> - **N_CTX = 4096** : taille du contexte, combien de tokens le modele peut voir
-> - **MAX_TOKENS = 512** : limite de tokens generes en sortie
-> - **TEMPERATURE = 0.3** : creativite basse, reponses focalisees
-> - **REPETITION_PENALTY = 1.3** : penalite pour eviter les repetitions"
+> "Le parametres N_CTX a 4096 definit combien de tokens le modele peut voir en meme temps. La temperature a 0.3 reduit l'aleatoire dans les choix de mots, donc des reponses plus determininistes et coherentes. Repetition penalty a 1.3 penalise les mots deja utilises pour eviter les boucles de repetition.
 
 ---
 
 ## SLIDE 15 : Fenetre de Contexte (1 minute)
 
-### CE QUE VOUS DITES
-
 > "L'architecture est **stateless**, l'historique de conversation n'est PAS inclus dans le contexte.
->
+> 
 > Chaque requete est independante et contient : le prompt systeme d'environ 200 tokens, les 5 documents FAISS de 800 a 1500 tokens, la question utilisateur de 50 tokens, et la reponse generee de maximum 512 tokens.
->
+> 
 > Au total, j'utilise environ 2000 a 2500 tokens sur les 4096 disponibles."
 
 ---
 
-## SLIDE 16 : Architecture 4 Containers (1 minute 30)
+## SLIDE 16 : Architecture 4 Containers (30 secondes)
 
-### CE QUE VOUS DITES
-
-> "L'architecture utilise 4 containers Docker sur un NAS avec 12 Go de RAM et une RTX 3060.
->
-> Le client PyQt5 fait de l'edge computing : il charge CamemBERT localement et calcule l'embedding de chaque question. Le client web envoie la question brute, et le serveur calcule l'embedding.
->
-> Le Container 2 API Backend valide la question et delegue au Container 3. Le Container 3 fait la recherche FAISS, recupere le contexte depuis MySQL Container 1, et genere la reponse avec le SLM.
->
-> Cette architecture est tres scalable : chaque nouveau client PyQt5 calcule son propre embedding, donc zero charge serveur supplementaire pour cette partie."
+> "Pour mon Architecture j'utilise 4 containers Docker. Le point cle : le client PyQt5 calcule l'embedding localement, donc scalable sans charge serveur supplementaire c'est une evolution future pour le client web"
 
 ---
 
 ## SLIDE 17 : Metriques avec Preuves (2 minutes)
 
-### CE QUE VOUS DITES
-
 > "Les metriques sont mesurables et reproductibles via l'endpoint d'evaluation.
->
+> 
 > Hit Rate 90% signifie que 9 questions sur 10 trouvent au moins une reponse pertinente dans le top-5. MRR 85% signifie que la bonne reponse est en position moyenne 1.18, donc presque toujours en premiere position. Confiance moyenne 77.7% est la similarite cosinus moyenne.
->
-> Le code est dans `routes_admin.py` lignes 273 a 287. D'abord on prend les top-K predictions de FAISS. Ensuite on calcule combien sont pertinents par intersection avec le ground truth. Le Hit Rate est binaire : 1 si au moins un resultat pertinent, 0 sinon. Le MRR est 1 divise par le rang du premier resultat pertinent.
->
+> 
+> Pour avoir ses information. D'abord on prend les top-K predictions de FAISS. Ensuite on calcule combien sont pertinents par intersection avec le ground truth. Le Hit Rate est binaire : 1 si au moins un resultat pertinent, 0 sinon. Le MRR est 1 divise par le rang du premier resultat pertinent.
+> 
 > Vous pouvez tester en direct sur l'endpoint affiche."
 
 ---
 
 ## SLIDE 18 : Hit Rate vs Precision@K (1 minute)
 
-### CE QUE VOUS DITES
-
 > "Precision@5 divise le nombre de resultats pertinents par 5. Si je trouve 2 bons resultats sur 5, j'ai 40%. Mais cette metrique est biaisee : meme avec un systeme parfait, si une seule reponse est correcte, Precision@5 = 1/5 = 20%.
->
-> Hit Rate est plus adapte a un chatbot : l'utilisateur veut TROUVER au moins une bonne reponse. C'est binaire : succes ou echec. Sur 20 questions, 18 trouvent une reponse pertinente, donc 90%.
->
-> Le MRR complete en mesurant la position de cette bonne reponse. 85% signifie qu'elle est presque toujours en premiere position."
+> 
+> le Hit Rate est plus adapte a un chatbot car l'utilisateur veut TROUVER au moins une bonne reponse. C'est binaire : succes ou echec. Sur 20 questions, 18 trouvent une reponse pertinente, donc 90%.
 
 ---
 
 ## SLIDE 19 : Demonstration (2 minutes)
 
-### CE QUE VOUS DITES
-
 > "Je vais maintenant vous montrer le systeme en action.
->
+> 
 > Premier test, une question simple : 'Comment installer AI_licia'. Le systeme devrait retourner la procedure d'installation avec une confiance elevee.
->
-> Deuxieme test, comprehension semantique : 'Mon PC rame avec le TTS'. Ici, le Self-Attention doit comprendre que 'rame' dans le contexte de 'PC' signifie 'lent', pas une pagaie de bateau.
->
+> 
+> Deuxieme test, comprehension semantique : 'Mon PC rame quand je stream'. Ici, le Self-Attention doit comprendre que 'rame' dans le contexte de 'PC' signifie 'lent', pas une pagaie de bateau.
+> 
 > Troisieme test, question hors-sujet pour montrer que le score de confiance detecte les questions non pertinentes."
 
 ---
 
-## SLIDE 20 : Succes & Apprentissages (1 minute)
+## SLIDE 20 : Succes & Apprentissages (30 secondes)
 
-### CE QUE VOUS DITES
-
-> "En resume, les succes du projet : Hit Rate 90% qui depasse l'objectif de 85%, MRR 85% confirmant que les bonnes reponses sont bien classees, la quantization Q4 viable pour du RAG, et l'architecture hybride scalable avec Docker stable en production.
->
-> Les apprentissages cles : le Self-Attention capture le contexte contrairement aux embeddings statiques, la normalisation L2 est une optimisation simple mais efficace, et un SLM suffit pour du RAG car il reformule du contexte."
+> "Voici le bilan du projet.
+> 
+> **Côté succès** : le système atteint 90% de Hit Rate sur mes tests, ce qui dépasse l'objectif de 85%. La quantization Q4 s'est révélée viable pour le RAG. L'architecture hybride avec edge computing est scalable. Et le déploiement Docker est stable en production.
+> 
+> **Côté défis résolus** : j'ai dû gérer le calcul d'embedding côté client ou serveur selon le contexte. L'optimisation Docker a nécessité plusieurs itérations. Et le prompt engineering du LLM a demandé beaucoup d'ajustements pour obtenir des réponses cohérentes.
+> 
+> Ce projet m'a permis d'approfondir les fondamentaux du Machine Learning appliqué au NLP : Self-Attention, embeddings, similarité vectorielle, quantization, et déploiement production."
 
 ---
 
-## SLIDE 21 : Conclusion (1 minute)
+## SLIDE 21 : Conclusion (30 secondes)
 
-### CE QUE VOUS DITES
-
-> "Pour conclure, j'ai demontre plusieurs fondamentaux ML dans ce projet.
->
-> Les embeddings contextuels avec CamemBERT, le mecanisme Self-Attention avec 12 tetes multi-head, la recherche vectorielle FAISS exhaustive, l'optimisation par normalisation L2, et la quantization Q4 avec 85% de reduction memoire.
->
-> Le resultat : un pipeline ML optimise avec un Hit Rate de 90% et un MRR de 85%, tournant sur un client PyQt5 et 4 containers Docker."
+> "En conclusion, Mila-Assist démontre qu'un RAG francophone performant peut être déployé localement sans API cloud.
+> 
+> Le système combine CamemBERT pour les embeddings contextuels, FAISS pour la recherche vectorielle et un LLM quantifié Q4 pour la génération.
+> 
+> L'architecture edge computing avec 4 containers Docker garantit la scalabilité et la maintenabilité.
+> 
+> 
+> 
+> Merci pour votre attention. Je suis disponible pour vos questions."
 
 ---
 
 ## SLIDE 22 : Questions
-
-### CE QUE VOUS DITES
-
-> "Merci pour votre attention. Je suis disponible pour vos questions."
 
 ---
 
@@ -319,32 +262,41 @@
 
 > "Les prompts ne sont pas stockes en base. Le prompt systeme est code en dur dans `generateur_llm.py`. Seuls les historiques de conversation sont stockes dans MySQL : la question utilisateur, la reponse generee, le score de confiance, et les IDs des sources utilisees."
 
+"Pourquoi GGUF et pas un autre format ?"
+  "GGUF remplace l'ancien format GGML avec de meilleures performances. Il supporte plusieurs niveaux de quantification : Q4, Q5, Q8, selon le compromis qualite/taille. J'utilise Q4 pour maximiser la reduction memoire."
+
+  "GGUF c'est CPU only ?"
+  "Non, GGUF fonctionne sur CPU ET GPU. Avec une carte NVIDIA, llama.cpp utilise CUDA pour accelerer l'inference tout en gardant les avantages de la quantification."
+
 ---
 
 # TIMING RECOMMANDE
 
-| Slide | Duree | Cumule |
-|-------|-------|--------|
-| 1. Titre | 30s | 0:30 |
-| 2. Contexte | 1min | 1:30 |
-| 3. Pipeline RAG | 1min30 | 3:00 |
-| 4. Indexation/Chunking | 2min | 5:00 |
-| 5. Tokenisation | 2min | 7:00 |
-| 6. Embedding CamemBERT | 1min30 | 8:30 |
-| 7. Self-Attention | 1min30 | 10:00 |
-| 8. Alternatives | 1min | 11:00 |
-| 9. FAISS | 1min30 | 12:30 |
-| 10. Similarite Cosinus | 1min | 13:30 |
-| 11. SLM Gemma | 1min30 | 15:00 |
-| 12. Quantization GGUF | 1min30 | 16:30 |
-| 13. Prompt Systeme | 1min | 17:30 |
-| 14. Fenetre Contexte | 1min | 18:30 |
-| 15. Architecture | 1min30 | 20:00 |
-| 16-17. Metriques | 3min | (demo) |
-| 18. Demo | 2min | (demo) |
-| 19. Succes | 1min | |
-| 20. Conclusion | 1min | |
-| **Total** | | **~20-25 min** |
+| Slide                           | Duree  | Cumule      |
+| ------------------------------- | ------ | ----------- |
+| 1. Titre                        | 30s    | 0:30        |
+| 2. Contexte                     | 1min   | 1:30        |
+| 3. Pipeline RAG                 | 1min30 | 3:00        |
+| 4. Indexation/Chunking          | 2min   | 5:00        |
+| 5. Tokenisation                 | 2min   | 7:00        |
+| 6. Embedding CamemBERT          | 1min30 | 8:30        |
+| 7. Self-Attention               | 1min30 | 10:00       |
+| 8. Alternatives                 | 1min   | 11:00       |
+| 9. FAISS                        | 1min30 | 12:30       |
+| 10. Similarite Cosinus          | 1min   | 13:30       |
+| 11. SLM Gemma                   | 1min30 | 15:00       |
+| 12. Quantization GGUF           | 1min30 | 16:30       |
+| 13. Prompt Systeme 1/2          | 30s    | 17:00       |
+| 14. Prompt Systeme 2/2 + Params | 30s    | 17:30       |
+| 15. Fenetre Contexte            | 1min   | 18:30       |
+| 16. Architecture                | 30s    | 19:00       |
+| 17. Metriques                   | 2min   | 21:00       |
+| 18. Hit Rate vs Precision       | 1min   | 22:00       |
+| 19. Demo                        | 2min   | 24:00       |
+| 20. Succes                      | 30s    | 24:30       |
+| 21. Conclusion                  | 30s    | 25:00       |
+| 22. Questions                   | -      | -           |
+| **Total**                       |        | **~20 min** |
 
 ---
 

@@ -111,7 +111,6 @@ Document Q&A                                   Question utilisateur
                 </div>
 
                 <div class="box">
-                    <strong>Justification :</strong> Ma base contient des paires Q&A courtes et autonomes.<br>
                     Chunker couperait le contexte et dégraderait le Self-Attention du SLM.<br>
                     <code>texte = f"{question} {reponse}"</code> → 1 embedding de 768D
                 </div>
@@ -342,8 +341,9 @@ faiss.normalize_L2(query_vector)  <span class="highlight">⭐</span>
                 <h2>SLM : gemma-2-2b-it-q4</h2>
 
                 <div class="box-warning">
-                    <strong>Terminologie :</strong> C'est un <strong>SLM</strong> (Small Language Model), pas un LLM<br>
-                    2 milliards de paramètres vs 70B+ pour un LLM
+                    <strong>SLM</strong> (Small Language Model),2 milliards de paramètres <br>
+                    vs <br>
+                    LLM (Large Language Model) 70B+ paramètres.
                 </div>
 
                 <div class="metric-grid">
@@ -758,7 +758,6 @@ INTERDICTIONS ABSOLUES:
                 </div>
 
                 <p class="small-text" style="margin-top: 50px;">
-                    Code source : deploy-nas/ (Docker + Python)<br>
                     Architecture : MySQL + API + LLM+FAISS (4 containers)
                 </p>
             </section>
