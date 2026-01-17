@@ -161,29 +161,39 @@
 
 ### CE QUE VOUS DITES
 
-> "Le prompt systeme utilise le format Instruct avec les balises [INST] et [/INST]. Le code se trouve dans `generateur_llm.py` ligne 97.
+> "Le prompt systeme utilise le format Instruct avec les balises [INST] et [/INST]. Le code se trouve dans `generateur_llm.py` lignes 98 a 153.
 >
 > J'ai du construire ce prompt par iterations pour obtenir des reponses coherentes. Deux regles critiques : la langue obligatoire francais car le modele tendait a repondre en anglais, et l'interdiction stricte d'inventer des URLs car le modele generait des liens fictifs."
 
 ---
 
-## SLIDE 14 : Fenetre de Contexte & Parametres (1 minute 30)
+## SLIDE 14 : Prompt Systeme 2/2 & Parametres (1 minute 30)
 
 ### CE QUE VOUS DITES
 
-> "L'architecture est **stateless**, l'historique de conversation n'est PAS inclus dans le contexte.
+> "Suite du prompt avec les instructions et interdictions sur les URLs.
 >
 > Les parametres cles du SLM :
 > - **N_CTX = 4096** : taille du contexte, combien de tokens le modele peut voir
 > - **MAX_TOKENS = 512** : limite de tokens generes en sortie
 > - **TEMPERATURE = 0.3** : creativite basse, reponses focalisees
-> - **REPETITION_PENALTY = 1.3** : penalite pour eviter les repetitions
+> - **REPETITION_PENALTY = 1.3** : penalite pour eviter les repetitions"
+
+---
+
+## SLIDE 15 : Fenetre de Contexte (1 minute)
+
+### CE QUE VOUS DITES
+
+> "L'architecture est **stateless**, l'historique de conversation n'est PAS inclus dans le contexte.
+>
+> Chaque requete est independante et contient : le prompt systeme d'environ 200 tokens, les 5 documents FAISS de 800 a 1500 tokens, la question utilisateur de 50 tokens, et la reponse generee de maximum 512 tokens.
 >
 > Au total, j'utilise environ 2000 a 2500 tokens sur les 4096 disponibles."
 
 ---
 
-## SLIDE 15 : Architecture 4 Containers (1 minute 30)
+## SLIDE 16 : Architecture 4 Containers (1 minute 30)
 
 ### CE QUE VOUS DITES
 
@@ -197,7 +207,7 @@
 
 ---
 
-## SLIDE 16 : Metriques avec Preuves (2 minutes)
+## SLIDE 17 : Metriques avec Preuves (2 minutes)
 
 ### CE QUE VOUS DITES
 
@@ -211,7 +221,7 @@
 
 ---
 
-## SLIDE 17 : Hit Rate vs Precision@K (1 minute)
+## SLIDE 18 : Hit Rate vs Precision@K (1 minute)
 
 ### CE QUE VOUS DITES
 
@@ -223,7 +233,7 @@
 
 ---
 
-## SLIDE 18 : Demonstration (2 minutes)
+## SLIDE 19 : Demonstration (2 minutes)
 
 ### CE QUE VOUS DITES
 
@@ -237,7 +247,7 @@
 
 ---
 
-## SLIDE 19 : Succes & Apprentissages (1 minute)
+## SLIDE 20 : Succes & Apprentissages (1 minute)
 
 ### CE QUE VOUS DITES
 
@@ -247,7 +257,7 @@
 
 ---
 
-## SLIDE 20 : Conclusion (1 minute)
+## SLIDE 21 : Conclusion (1 minute)
 
 ### CE QUE VOUS DITES
 
@@ -259,7 +269,7 @@
 
 ---
 
-## SLIDE 21 : Questions
+## SLIDE 22 : Questions
 
 ### CE QUE VOUS DITES
 

@@ -405,18 +405,18 @@ faiss.normalize_L2(query_vector)  <span class="highlight">⭐</span>
 
             <!-- SLIDE 13: Prompt Systeme - Partie 1 -->
             <section>
-                <h2>Prompt Système (1/2) <span style="font-size: 0.5em; color: #94a3b8;">generateur_llm.py:97-145</span></h2>
+                <h2>Prompt Système (1/2) <span style="font-size: 0.5em; color: #94a3b8;">generateur_llm.py:98-153</span></h2>
 
                 <div class="code-box" style="padding: 15px; line-height: 1.35; background: #1e1e2e; font-size: 0.9em;">
-<pre style="margin: 0; color: #cdd6f4;">prompt = f"""&lt;s&gt;[INST] Tu es Mila, une assistante virtuelle francophone.
+<pre style="margin: 0; color: #cdd6f4;">prompt = f"""&lt;s&gt;[INST] Tu es Mila, une assistante virtuelle francophone sur le produit AI_Licia.
 
 <span style="color: #f9e2af;">=== REGLE ABSOLUE ===</span>
 LANGUE OBLIGATOIRE: FRANCAIS SEULEMENT
 - Tu dois repondre EXCLUSIVEMENT en francais
 - AUCUN mot anglais n'est autorise dans ta reponse
 - Si le contexte contient de l'anglais, tu le traduis en francais
-- Meme si la question est en anglais, ta reponse doit etre en francais
-- Meme si on te demande de traduire en anglais, refuse et dis que tu ne parles que francais
+- Si la question est en anglais, ta reponse doit etre en francais
+- Si on te demande de répondre en anglais, explique gentiment que tu es configurée pour répondre uniquement en français
 - Tu es une assistante FRANCAISE qui parle FRANCAIS
 - Tu dois rester polie et courtoise en toute situation
 
@@ -433,7 +433,7 @@ SI le contexte contient des URLs:
 
             <!-- SLIDE 13b: Prompt Systeme - Partie 2 -->
             <section>
-                <h2>Prompt Système (2/2) <span style="font-size: 0.5em; color: #94a3b8;">generateur_llm.py:97-145</span></h2>
+                <h2>Prompt Système (2/2) <span style="font-size: 0.5em; color: #94a3b8;">generateur_llm.py:98-153</span></h2>
 
                 <div class="code-box" style="padding: 15px; line-height: 1.35; background: #1e1e2e; font-size: 0.9em;">
 <pre style="margin: 0; color: #cdd6f4;">SI le contexte ne contient PAS d'URL:
@@ -446,6 +446,7 @@ INTERDICTIONS ABSOLUES:
 - Ne devine JAMAIS une URL
 - Ne raccourcis JAMAIS une URL
 - N'ecris AUCUNE URL qui n'est pas dans le contexte
+- Si tu n'es pas sur a 100% qu'une URL est dans le contexte, NE L'UTILISE PAS
 
 <span style="color: #f9e2af;">=== INSTRUCTIONS ===</span>
 - Reponds toujours en francais a partir du contexte fourni
@@ -462,38 +463,40 @@ INTERDICTIONS ABSOLUES:
 [/INST]"""</pre>
                 </div>
 
+                <div class="box" style="padding: 10px 16px; font-size: 0.85em; margin-top: 10px;">
+                    <strong>Paramètres :</strong><br>
+                    • <strong>N_CTX = 4096</strong> : taille du contexte (tokens visibles)<br>
+                    • <strong>MAX_TOKENS = 512</strong> : limite de tokens générés<br>
+                    • <strong>TEMPERATURE = 0.3</strong> : créativité basse, réponses focalisées<br>
+                    • <strong>REPETITION_PENALTY = 1.3</strong> : pénalité pour éviter les répétitions
+                </div>
             </section>
 
-            <!-- SLIDE 14: Fenetre de Contexte & Parametres -->
+            <!-- SLIDE 14: Fenetre de Contexte -->
             <section>
-                <h2>Fenêtre de Contexte & Paramètres</h2>
+                <h2>Fenêtre de Contexte</h2>
 
-                <div class="two-columns">
-                    <div>
-                        <h3 style="color: #22c55e; font-size: 1em;">Paramètres SLM</h3>
-                        <div class="box" style="font-size: 0.8em; padding: 12px;">
-                            <strong>N_CTX = 4096</strong><br>
-                            <span style="color: #94a3b8;">Taille du contexte (tokens visibles)</span><br><br>
-                            <strong>MAX_TOKENS = 512</strong><br>
-                            <span style="color: #94a3b8;">Limite de tokens générés</span><br><br>
-                            <strong>TEMPERATURE = 0.3</strong><br>
-                            <span style="color: #94a3b8;">Créativité basse, réponses focalisées</span><br><br>
-                            <strong>REPETITION_PENALTY = 1.3</strong><br>
-                            <span style="color: #94a3b8;">Pénalité pour éviter les répétitions</span>
-                        </div>
+                <div class="metric-grid" style="gap: 12px;">
+                    <div class="metric-card" style="padding: 12px;">
+                        <div class="metric-value" style="font-size: 1.4em;">4096</div>
+                        <div class="metric-label" style="font-size: 0.75em;">Tokens max</div>
                     </div>
-                    <div>
-                        <h3 style="color: #f59e0b; font-size: 1em;">Architecture Stateless</h3>
-                        <div class="box" style="font-size: 0.8em; padding: 12px;">
-                            <strong>Pas d'historique</strong> de conversation<br><br>
-                            Chaque requête contient :<br>
-                            • Prompt système (~200 tokens)<br>
-                            • Top-5 docs FAISS (~800-1500)<br>
-                            • Question (~50 tokens)<br>
-                            • Réponse (max 512 tokens)<br><br>
-                            <strong>Total :</strong> ~2000-2500 / 4096
-                        </div>
+                    <div class="metric-card" style="padding: 12px;">
+                        <div class="metric-value" style="font-size: 1.4em;">5</div>
+                        <div class="metric-label" style="font-size: 0.75em;">Documents top-K</div>
                     </div>
+                    <div class="metric-card" style="padding: 12px;">
+                        <div class="metric-value" style="font-size: 1.4em;">Stateless</div>
+                        <div class="metric-label" style="font-size: 0.75em;">Architecture</div>
+                    </div>
+                </div>
+
+                <div class="box" style="font-size: 0.8em; padding: 10px 12px;">
+                    <strong>Architecture stateless</strong> (single-turn) - Pas d'historique de conversation<br><br>
+                    Chaque requête contient :<br>
+                    - Prompt système (~200 tokens) - Top-5 documents FAISS (~800-1500 tokens)<br>
+                    - Question utilisateur (~50 tokens) - Réponse générée (max 512 tokens)<br>
+                    <strong>Total :</strong> ~2000-2500 tokens utilisés sur 4096 disponibles
                 </div>
             </section>
 
