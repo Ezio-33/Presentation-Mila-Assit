@@ -49,29 +49,22 @@
             <section>
                 <h2>Pipeline RAG - Vue d'ensemble</h2>
 
-                <div class="visual-diagram">
+                <div class="visual-diagram" style="font-size: 0.72em;">
 <pre>
-INDEXATION (une seule fois)                    INFERENCE (chaque requete)
-========================                       ==========================
+<span style="color: #22c55e; font-weight: bold;">INDEXATION (une seule fois)</span>
 
-Document Q&A                                   Question utilisateur
-    |                                               |
-    v                                               v
-[Tokenisation]                                 [Tokenisation]
-    |                                               |
-    v                                               v
-[Embedding CamemBERT]                          [Embedding CamemBERT]
-    |                                               v
-    v                                         [Recherche FAISS top-5]
-[Stockage FAISS]  <------------------------->       |
-                                                    v
-                                              [Contexte + Question]
-                                                    |
-                                                    v
-                                              [SLM gemma-2-2b-it-q4]
-                                                    |
-                                                    v
-                                              Reponse + Confiance
+  Document Q&A ───→ [Tokenisation] ───→ [Embedding CamemBERT] ───→ [Stockage FAISS]
+                                                                          │
+                                                                          ▼
+<span style="color: #818cf8; font-weight: bold;">INFERENCE (chaque requête)</span>                                          ┌─────────────┐
+                                                                    │ Index FAISS │
+  Question ───→ [Tokenisation] ───→ [Embedding CamemBERT] ───→ [Recherche top-5]
+  utilisateur                                                          │
+                                                                       ▼
+                              [SLM gemma-2-2b-it-q4] ◄─── [Contexte + Question]
+                                        │
+                                        ▼
+                               <span class="highlight">Réponse + Confiance</span>
 </pre>
                 </div>
 
@@ -123,26 +116,26 @@ Document Q&A                                   Question utilisateur
             <section>
                 <h2>Étape 2 : Tokenisation</h2>
 
-                <div class="visual-diagram">
+                <div class="visual-diagram" style="font-size: 0.75em;">
 <pre>
 "Comment configurer le TTS ?"
-            |
-            v
-    [TOKENISATION SentencePiece]
-            |
-            v
-  ["Comment", "configurer", "le", "TTS", "?"]
-       |          |          |      |      |
-       v          v          v      v      v
-    [emb1]     [emb2]     [emb3] [emb4] [emb5]
-       |          |          |      |      |
-       +----+----+----+----+----+----+----+
-                        |
-                        v
-                 [MEAN POOLING]
-                        |
-                        v
-            Vecteur final 768 dimensions
+              │
+              ▼
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│  <span style="color: #f59e0b;">[TOKENISATION SentencePiece]</span>                                                       │
+│                                                                                     │
+│  "Comment"  ───→  "configurer"  ───→  "le"  ───→  "TTS"  ───→  "?"                  │
+│      │                 │               │            │           │                   │
+│      ▼                 ▼               ▼            ▼           ▼                   │
+│   [emb1]            [emb2]          [emb3]       [emb4]      [emb5]                 │
+│      │                 │               │            │           │                   │
+│      └────────────────────────┬────────────────────────────────┘                    │
+│                               ▼                                                     │
+│                      <span style="color: #22c55e;">[MEAN POOLING]</span>                                                 │
+│                               │                                                     │
+│                               ▼                                                     │
+│                  <span class="highlight">Vecteur final 768 dimensions</span>                                       │
+└─────────────────────────────────────────────────────────────────────────────────────┘
 </pre>
                 </div>
 
@@ -198,22 +191,27 @@ Document Q&A                                   Question utilisateur
             <section>
                 <h2>Mécanisme Clé : Self-Attention</h2>
 
-                <div class="visual-diagram">
+                <div class="visual-diagram" style="font-size: 0.85em;">
 <pre>
-Phrase: "AI_licia répond dans le chat pendant le stream"
+Phrase: <span style="color: #a5b4fc;">"AI_licia répond dans le <span style="color: #f59e0b; font-weight: bold;">chat</span> pendant le stream"</span>
 
-Mot "chat" analyse son contexte :
-├─ "AI_licia" →  0.18
-├─ "répond"   →  0.65
-├─ "dans"     →  0.08
-├─ "le"       →  0.05
-├─ "chat"     →  0.12
-├─ "pendant"  →  0.42
-├─ "le"       →  0.06
-└─ <span class="highlight">"stream"   →  0.88  (FORTE attention)</span>
+Le mot <span style="color: #f59e0b; font-weight: bold;">"chat"</span> calcule un score d'attention pour chaque mot de la phrase :
 
-→ "chat" = animal félin ? NON
-→ "chat" = discussion Twitch ? OUI ✅
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                 │
+│   "AI_licia"  ──→  <span style="color: #94a3b8;">0.18</span>  ░░░░░                                                  │
+│   "répond"    ──→  <span style="color: #818cf8;">0.65</span>  ░░░░░░░░░░░░░░                                         │
+│   "dans"      ──→  <span style="color: #94a3b8;">0.08</span>  ░░                                                     │
+│   "le"        ──→  <span style="color: #94a3b8;">0.05</span>  ░                                                      │
+│   "chat"      ──→  <span style="color: #94a3b8;">0.12</span>  ░░░                                                    │
+│   "pendant"   ──→  <span style="color: #818cf8;">0.42</span>  ░░░░░░░░░░                                             │
+│   "le"        ──→  <span style="color: #94a3b8;">0.06</span>  ░░                                                     │
+│   <span class="highlight">"stream"    ──→  0.88  ░░░░░░░░░░░░░░░░░░░░░  (FORTE ATTENTION)</span>               │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+  <span style="color: #ef4444;">✗ "chat" = animal félin ?</span>        <span style="color: #22c55e; font-weight: bold;">✓ "chat" = discussion Twitch !</span>
+    (contexte : maison, miaou)         (contexte : stream, répond)
 </pre>
                 </div>
 
