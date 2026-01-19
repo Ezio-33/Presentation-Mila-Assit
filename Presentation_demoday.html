@@ -130,18 +130,18 @@
 Utilisateur : <span style="color: #a5b4fc;">"Mon PC rame avec le TTS"</span>
 
 ┌─────────────────────────────────────────┐    ┌─────────────────────────────────────────┐
-│  <span style="color: #ef4444;">CHATBOT CLASSIQUE (mots-clés)</span>          │    │  <span style="color: #22c55e;">MILA-ASSIST (compréhension IA)</span>        │
+│  <span style="color: #ef4444;">CHATBOT CLASSIQUE (mots-clés)</span>          │    │  <span style="color: #22c55e;">MILA-ASSIST (compréhension IA)</span>         │
 │                                         │    │                                         │
-│  "PC"  ───→ ordinateur ✓                │    │  "PC" + "rame" + "TTS"                  │
-│  "rame" ───→ <span style="color: #ef4444;">pagaie de bateau ??</span>       │    │         │                             │
-│  "TTS" ───→ <span style="color: #ef4444;">inconnu ??</span>                │    │         ▼                             │
-│                                         │    │  <span style="color: #22c55e;">Analyse du CONTEXTE</span>                  │
-│  ───────────────────────                │    │         │                             │
-│  <span style="color: #ef4444;">Résultat : CONFUSION</span>                  │    │         ▼                             │
-│                                         │    │  "rame" = lenteur informatique         │
-│                                         │    │  "TTS" = Text-to-Speech AI_licia       │
+│  "PC"  ───→ ordinateur                  │    │  "PC" + "rame" + "TTS"                  │
+│  "rame" ───→ <span style="color: #ef4444;">pagaie de bateau ??</span>        │    │         │                               │
+│  "TTS" ───→ <span style="color: #ef4444;">inconnu ??</span>                  │    │         ▼                               │
+│                                         │    │  <span style="color: #22c55e;">Analyse du CONTEXTE</span>                    │
+│  ───────────────────────                │    │         │                               │
+│  <span style="color: #ef4444;">Résultat : CONFUSION</span>                   │    │         ▼                               │
+│                                         │    │  "rame" = lenteur informatique          │
+│                                         │    │  "TTS" = Text-to-Speech AI_licia        │
 │                                         │    │                                         │
-│                                         │    │  <span style="color: #22c55e;">Résultat : SOLUTION PERTINENTE ✓</span>      │
+│                                         │    │  <span style="color: #22c55e;">Résultat : SOLUTION PERTINENTE </span>        │
 └─────────────────────────────────────────┘    └─────────────────────────────────────────┘
 </pre>
                 </div>
@@ -162,7 +162,7 @@ Utilisateur : <span style="color: #a5b4fc;">"Mon PC rame avec le TTS"</span>
               ▼
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
 │                                                                                         │
-│   <span style="color: #f59e0b;">1. COMPRENDRE</span>          <span style="color: #818cf8;">2. CHERCHER</span>            <span style="color: #22c55e;">3. RÉPONDRE</span>                       │
+│   <span style="color: #f59e0b;">1. COMPRENDRE</span>          <span style="color: #818cf8;">2. CHERCHER</span>            <span style="color: #22c55e;">3. RÉPONDRE</span>                             │
 │                                                                                         │
 │   Question ───→ Code    Code ───→ Base de     Contexte ───→ IA                          │
 │   en texte      numérique       connaissances              │                            │
@@ -191,19 +191,19 @@ Utilisateur : <span style="color: #a5b4fc;">"Mon PC rame avec le TTS"</span>
 ┌───────────────────┐                    ┌──────────────────────────────────────────────────────┐
 │                   │                    │              <span style="color: #818cf8;">SERVEUR LOCAL (NAS)</span>                     │
 │  <span style="color: #22c55e;">APP BUREAU</span>       │                    │                                                      │
-│  PyQt5            │ ──────────────────→│   ┌─────────┐     ┌─────────────────────────────┐   │
-│  + Calcul local   │                    │   │         │     │   <span style="color: #22c55e;">INTELLIGENCE ARTIFICIELLE</span>  │   │
-└───────────────────┘                    │   │   API   │────→│                             │   │
-                                         │   │ Backend │     │  • Compréhension (CamemBERT)│   │
-                                         │   │         │     │  • Recherche (FAISS)        │   │
-┌───────────────────┐                    │   └─────────┘     │  • Génération (Gemma-2B)    │   │
-│                   │                    │        │          └──────────────┬──────────────┘   │
-│  <span style="color: #f59e0b;">INTERFACE WEB</span>    │ ──────────────────→│        │                        │                  │
-│  Navigateur       │                    │        ▼                        ▼                  │
-│                   │                    │   ┌──────────────────────────────────────────┐     │
-└───────────────────┘                    │   │         <span style="color: #6366f1;">BASE DE CONNAISSANCES</span>            │     │
-                                         │   │         Q&A • MySQL                      │     │
-                                         │   └──────────────────────────────────────────┘     │
+│  PyQt5            │ ──────────────────→│   ┌─────────┐     ┌─────────────────────────────┐    │
+│  + Calcul local   │                    │   │         │     │   <span style="color: #22c55e;">INTELLIGENCE ARTIFICIELLE</span> │    │
+└───────────────────┘                    │   │   API   │────→│                             │    │
+                                         │   │ Backend │     │  • Compréhension (CamemBERT)│    │
+                                         │   │         │     │  • Recherche (FAISS)        │    │
+┌───────────────────┐                    │   └─────────┘     │  • Génération (Gemma-2B)    │    │
+│                   │                    │        │          └─────────────┬───────────────┘    │
+│  <span style="color: #f59e0b;">INTERFACE WEB</span>    │ ──────────────────→│        │                        │                    │
+│  Navigateur       │                    │        ▼                        ▼                    │
+│                   │                    │   ┌──────────────────────────────────────────┐       │
+└───────────────────┘                    │   │         <span style="color: #6366f1;">BASE DE CONNAISSANCES</span>            │       │
+                                         │   │         Q&A • MySQL                      │       │
+                                         │   └──────────────────────────────────────────┘       │
                                          └──────────────────────────────────────────────────────┘
 
          <span style="color: #22c55e;">✓ Hébergement local = Souveraineté des données</span>          <span style="color: #22c55e;">✓ Coût API : 0€</span>
