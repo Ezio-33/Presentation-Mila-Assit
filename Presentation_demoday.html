@@ -47,9 +47,9 @@
                     <div>
                         <h3 style="color: #22c55e;">Avec Mila-Assist</h3>
                         <ul class="bullet-list">
-                            <li class="success">Reponse instantanee 24/7</li>
+                            <li class="success">Reponse 24/7</li>
                             <li class="success">Comprehension intelligente</li>
-                            <li class="success">1366 questions couvertes</li>
+                            <li class="success">Base de connaissances complete</li>
                             <li class="success">Support humain libere</li>
                         </ul>
                     </div>
@@ -76,52 +76,22 @@
                 </div>
 
                 <div class="metric-grid" style="margin-top: 25px;">
-                    <div class="metric-card">
-                        <div class="metric-value" style="font-size: 2em;">1366</div>
-                        <div class="metric-label">Questions couvertes</div>
+                    <div class="metric-card" style="padding: 12px;">
+                        <div class="metric-value" style="font-size: 1.3em;">Q&R</div>
+                        <div class="metric-label">Base de connaissances</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-value" style="font-size: 2em;">24/7</div>
+                    <div class="metric-card" style="padding: 12px;">
+                        <div class="metric-value" style="font-size: 1.3em;">24/7</div>
                         <div class="metric-label">Disponibilite</div>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-value" style="font-size: 2em;">&lt;2s</div>
+                    <div class="metric-card" style="padding: 12px;">
+                        <div class="metric-value" style="font-size: 1.3em;"><5s</div>
                         <div class="metric-label">Temps de reponse</div>
                     </div>
                 </div>
             </section>
 
-            <!-- SLIDE 4: Mon Parcours -->
-            <section>
-                <h2>Mon Parcours sur ce Projet</h2>
-
-                <div class="visual-diagram" style="font-size: 0.8em;">
-<pre>
-TIMELINE DU PROJET
-==================
-
-Mois 1-2 : EXPLORATION
------------------------
-- Etude des solutions existantes (ChatGPT, Claude...)
-- Probleme : Cout API + RGPD + Hallucinations
-- Decision : Construire en local avec RAG
-
-Mois 3-4 : DEVELOPPEMENT
-------------------------
-- Architecture 4 containers Docker
-- Integration CamemBERT + FAISS + Gemma
-- Iterations sur le prompt engineering
-
-Mois 5 : OPTIMISATION & TESTS
------------------------------
-- Quantization Q4 pour reduire la RAM
-- Hit Rate : 72% -> 85% -> <span class="highlight">90%</span>
-- Deploiement sur NAS Synology
-</pre>
-                </div>
-            </section>
-
-            <!-- SLIDE 5: Le Defi Technique (simplifie) -->
+            <!-- SLIDE 4: Le Defi Technique (simplifie) -->
             <section>
                 <h2>Le Defi : Comprendre les Questions</h2>
 
@@ -194,7 +164,7 @@ Chatbot classique (mots-cles) :
                 <div class="visual-diagram" style="font-size: 0.7em;">
 <pre>
 +------------------+          +----------------------------------------+
-|                  |          |         SERVEUR NAS (local)            |
+|                  |          |           SERVEUR LOCAL                |
 |   UTILISATEUR    |          |                                        |
 |                  |   --->   |   +----------+    +----------------+   |
 |  Application     |          |   |          |    |                |   |
@@ -206,12 +176,12 @@ Chatbot classique (mots-cles) :
 |                  |          |        v          | - Generation   |   |
 |   UTILISATEUR    |   --->   |   +----------+    +----------------+   |
 |                  |          |   |          |           |             |
-|  Interface Web   |          |   |  MySQL   |<----------+             |
-|                  |          |   |  1366 QA |                         |
+|  Interface Web   |          |   |   Base   |<----------+             |
+|                  |          |   | Connais. |                         |
 +------------------+          |   +----------+                         |
                               +----------------------------------------+
 
-                              Hebergement : NAS Synology (local, RGPD OK)
+                              Hebergement local = Souverainete des donnees
                               Cout mensuel API : 0 EUR
 </pre>
                 </div>
@@ -221,27 +191,33 @@ Chatbot classique (mots-cles) :
             <section class="center">
                 <h2>Les Resultats</h2>
 
-                <div class="metric-grid" style="max-width: 900px; margin: 40px auto;">
-                    <div class="metric-card">
-                        <div class="metric-value">90%</div>
-                        <div class="metric-label">Taux de reussite</div>
-                        <span style="font-size: 0.75em; color: #94a3b8; display: block; margin-top: 5px;">9 questions sur 10 trouvent une reponse pertinente</span>
+                <div class="metric-grid" style="max-width: 700px; margin: 30px auto; gap: 15px;">
+                    <div class="metric-card" style="padding: 15px;">
+                        <div class="metric-value" style="font-size: 1.8em;">90%</div>
+                        <div class="metric-label" style="font-size: 0.85em;">Taux de reussite</div>
+                        <span style="font-size: 0.7em; color: #94a3b8; display: block; margin-top: 3px;">9/10 trouvent une reponse</span>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-value">85%</div>
-                        <div class="metric-label">Qualite du classement</div>
-                        <span style="font-size: 0.75em; color: #94a3b8; display: block; margin-top: 5px;">La bonne reponse est presque toujours en 1ere position</span>
+                    <div class="metric-card" style="padding: 15px;">
+                        <div class="metric-value" style="font-size: 1.8em;">85%</div>
+                        <div class="metric-label" style="font-size: 0.85em;">Qualite classement</div>
+                        <span style="font-size: 0.7em; color: #94a3b8; display: block; margin-top: 3px;">Bonne reponse en 1ere pos.</span>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-value">&lt;2s</div>
-                        <div class="metric-label">Temps de reponse</div>
-                        <span style="font-size: 0.75em; color: #94a3b8; display: block; margin-top: 5px;">Pipeline complet : recherche + generation</span>
+                    <div class="metric-card" style="padding: 15px;">
+                        <div class="metric-value" style="font-size: 1.8em;">&lt;2s</div>
+                        <div class="metric-label" style="font-size: 0.85em;">Temps de reponse</div>
+                        <span style="font-size: 0.7em; color: #94a3b8; display: block; margin-top: 3px;">Recherche + generation</span>
                     </div>
                 </div>
 
                 <div class="box-success" style="max-width: 700px; margin: 30px auto;">
                     <strong>Objectif depasse :</strong> 90% vs 85% requis<br>
                     <span style="font-size: 0.9em;">Mesure sur 20 questions de test en conditions reelles</span>
+                </div>
+
+                <div class="box" style="margin-top: 20px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    <strong>Page d'evaluation des metriques</strong><br>
+                    <a href="http://185.246.86.162:9000/api/v1/admin/evaluation?sample=20" target="_blank" class="demo-link" style="font-size: 0.9em;">http://185.246.86.162:9000/api/v1/admin/evaluation?sample=20</a><br>
+                    <span style="font-size: 0.8em; color: #94a3b8;">Teste 20 questions et affiche les metriques en temps reel</span>
                 </div>
             </section>
 
@@ -255,7 +231,7 @@ Chatbot classique (mots-cles) :
                         <ul class="bullet-list">
                             <li class="success">Systeme fonctionnel en production</li>
                             <li class="success">Zero dependance cloud</li>
-                            <li class="success">Conforme RGPD (donnees locales)</li>
+                            <li class="success">Souverainete des donnees</li>
                             <li class="success">Architecture scalable</li>
                         </ul>
                     </div>
@@ -272,7 +248,7 @@ Chatbot classique (mots-cles) :
 
                 <div class="box" style="margin-top: 30px;">
                     <strong>Le plus grand defi resolu :</strong><br>
-                    Faire tourner une IA complete sur un NAS de 8 GB RAM sans GPU
+                    Faire tourner une IA complete sur un serveur avec des ressources limitees
                 </div>
             </section>
 
@@ -293,9 +269,9 @@ Chatbot classique (mots-cles) :
                             <td>Quantization Q4 : -85% memoire</td>
                         </tr>
                         <tr>
-                            <td><strong>Pas de GPU</strong></td>
-                            <td>Inference lente sur CPU</td>
-                            <td>Format GGUF optimise CPU</td>
+                            <td><strong>Ressources limitees</strong></td>
+                            <td>Debut : 6 Go RAM, pas de GPU</td>
+                            <td>Upgrade vers 12 Go + RTX 3060</td>
                         </tr>
                         <tr>
                             <td><strong>Reponses en anglais</strong></td>
@@ -315,41 +291,22 @@ Chatbot classique (mots-cles) :
                 </div>
             </section>
 
-            <!-- SLIDE 11: Demonstration Teaser -->
+            <!-- SLIDE 11: Demonstration Live -->
             <section class="center">
-                <h2>Demonstration</h2>
+                <h2>Demonstration Live</h2>
 
-                <div style="font-size: 1.5em; margin: 40px 0; color: #a5b4fc;">
-                    <em>Voyons Mila-Assist en action...</em>
-                </div>
-
-                <div class="box" style="max-width: 700px; margin: 30px auto; text-align: left;">
-                    <strong>Tests que je vais effectuer :</strong><br><br>
+                <div class="box" style="max-width: 700px; margin: 25px auto; text-align: left;">
+                    <strong>Tests a effectuer :</strong><br><br>
                     1. <span class="highlight">Question simple</span> : "Comment installer AI_licia ?"<br><br>
                     2. <span class="accent">Comprehension semantique</span> : "Mon PC rame avec le TTS"<br>
                     <span style="font-size: 0.85em; color: #94a3b8;">(Le systeme doit comprendre que "rame" = lenteur)</span><br><br>
                     3. <span style="color: #ef4444;">Question hors-sujet</span> : "Quelle est la capitale de la France ?"<br>
                     <span style="font-size: 0.85em; color: #94a3b8;">(Le systeme doit indiquer qu'il ne sait pas)</span>
                 </div>
-            </section>
 
-            <!-- SLIDE 12: Demo Live -->
-            <section class="center">
-                <h2>Demo Live</h2>
-
-                <div class="box-success" style="font-size: 1.3em; margin-top: 40px;">
+                <div class="box-success" style="font-size: 1.2em; margin-top: 20px; max-width: 700px; margin-left: auto; margin-right: auto;">
                     <strong>Interface Web de Test</strong><br>
-                    <a href="http://185.246.86.162:8080" target="_blank" class="demo-link" style="font-size: 1.1em;">http://185.246.86.162:8080</a>
-                </div>
-
-                <div class="box" style="margin-top: 30px; max-width: 700px; margin-left: auto; margin-right: auto;">
-                    <strong>Page d'evaluation des metriques</strong><br>
-                    <a href="http://185.246.86.162:9000/api/v1/admin/evaluation?sample=20" target="_blank" class="demo-link" style="font-size: 0.9em;">http://185.246.86.162:9000/api/v1/admin/evaluation?sample=20</a><br>
-                    <span style="font-size: 0.8em; color: #94a3b8;">Teste 20 questions et affiche les metriques en temps reel</span>
-                </div>
-
-                <div style="margin-top: 50px;">
-                    <img src="img/demo_screenshot.png" alt="Screenshot Demo" style="max-width: 80%; border-radius: 12px; border: 2px solid #475569;" onerror="this.style.display='none'">
+                    <a href="http://185.246.86.162:8080" target="_blank" class="demo-link" style="font-size: 1em;">http://185.246.86.162:8080</a>
                 </div>
             </section>
 
@@ -433,7 +390,7 @@ Chatbot classique (mots-cles) :
                 <div class="box" style="max-width: 800px; margin: 30px auto; text-align: center;">
                     <strong>MILA-ASSIST demontre qu'il est possible de :</strong><br><br>
                     Creer une IA performante, hebergee localement,<br>
-                    sans cout d'API, conforme RGPD,<br>
+                    sans cout d'API, avec souverainete des donnees,<br>
                     sur du materiel accessible.
                 </div>
 
@@ -450,8 +407,7 @@ Chatbot classique (mots-cles) :
                 <div style="margin-top: 60px;">
                     <p style="font-size: 1.2em;"><strong>Samuel VERSCHUEREN</strong></p>
                     <p class="small-text" style="margin-top: 30px;">
-                        Demo : <a href="http://185.246.86.162:8080" class="demo-link">http://185.246.86.162:8080</a><br>
-                        Code : deploy-nas/ + client/
+                        Demo : <a href="http://185.246.86.162:8080" class="demo-link">http://185.246.86.162:8080</a>
                     </p>
                 </div>
 
@@ -465,8 +421,8 @@ Chatbot classique (mots-cles) :
                         <div class="metric-label">Reponse</div>
                     </div>
                     <div class="metric-card" style="padding: 15px;">
-                        <div class="metric-value" style="font-size: 1.3em;">1366</div>
-                        <div class="metric-label">Questions</div>
+                        <div class="metric-value" style="font-size: 1.3em;">7j/7</div>
+                        <div class="metric-label">Disponible</div>
                     </div>
                 </div>
             </section>

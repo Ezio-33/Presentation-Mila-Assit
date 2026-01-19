@@ -27,7 +27,7 @@
 >
 > Avant Mila-Assist, c'etait du support 100% humain. Temps de reponse ? Des heures. Les memes questions revenaient en boucle. Et la nuit ? Personne pour repondre.
 >
-> Avec Mila-Assist, tout change. Reponse instantanee, 24 heures sur 24, 7 jours sur 7. Le systeme comprend les questions, meme formulees differemment. Il couvre 1366 sujets. Et le support humain peut enfin se concentrer sur les cas complexes.
+> Avec Mila-Assist, tout change. Reponse 24 heures sur 24, 7 jours sur 7. Le systeme comprend les questions, meme formulees differemment. Une base de connaissances complete. Et le support humain peut enfin se concentrer sur les cas complexes.
 >
 > C'est le passage d'un support reactif a un support intelligent."
 
@@ -43,27 +43,11 @@
 >
 > Mila-Assist est le support technique de cette plateforme. Quand un utilisateur se demande comment installer AI_licia, comment configurer la voix, ou pourquoi ca rame, c'est Mila qui repond.
 >
-> Quelques chiffres : 1366 questions couvertes dans la base de connaissances, disponibilite 24/7, et temps de reponse inferieur a 2 secondes."
+> En resume : une base de connaissances complete, disponibilite 24/7, et un temps de reponse variable selon la complexite."
 
 ---
 
-## SLIDE 4 : Mon Parcours (2 minutes)
-
-### CE QUE VOUS DITES
-
-> "Laissez-moi vous raconter comment j'en suis arrive la.
->
-> Les deux premiers mois, c'etait l'exploration. J'ai regarde les solutions existantes : ChatGPT, Claude, et d'autres. Le probleme ? Le cout des API peut exploser. Les donnees des utilisateurs partent sur des serveurs americains, donc probleme RGPD. Et surtout, ces modeles peuvent inventer des reponses, ce qu'on appelle les hallucinations.
->
-> J'ai donc decide de tout construire en local avec une architecture RAG. RAG, ca veut dire que l'IA ne peut repondre qu'avec les informations de ma base de donnees. Pas d'invention possible.
->
-> Les mois 3 et 4, c'etait le developpement intensif. Architecture avec 4 containers Docker, integration des technologies d'intelligence artificielle, et surtout beaucoup d'iterations sur le prompt engineering pour obtenir des reponses coherentes.
->
-> Le dernier mois, optimisation et tests. Ma premiere version avait 72% de reussite. Aujourd'hui ? 90%. Chaque iteration a apporte son lot d'ameliorations."
-
----
-
-## SLIDE 5 : Le Defi Technique - Vulgarise (1 minute 30)
+## SLIDE 4 : Le Defi Technique - Vulgarise (1 minute 30)
 
 ### CE QUE VOUS DITES
 
@@ -77,7 +61,7 @@
 
 ---
 
-## SLIDE 6 : Comment ca marche - Vulgarise (1 minute 30)
+## SLIDE 5 : Comment ca marche - Vulgarise (1 minute 30)
 
 ### CE QUE VOUS DITES
 
@@ -87,7 +71,7 @@
 >
 > Premiere etape : comprendre. La question est transformee en une sorte de code secret numerique. C'est comme traduire votre question dans un langage que la machine comprend parfaitement.
 >
-> Deuxieme etape : chercher. Mila parcourt sa memoire de 1366 questions et trouve les 5 plus proches de la votre. Cette recherche est ultra-rapide, quelques millisecondes.
+> Deuxieme etape : chercher. Mila parcourt sa base de connaissances et trouve les 5 questions les plus proches de la votre. Cette recherche est ultra-rapide.
 >
 > Troisieme etape : repondre. Avec ces 5 elements de contexte, l'intelligence artificielle formule une reponse naturelle et complete.
 >
@@ -95,7 +79,7 @@
 
 ---
 
-## SLIDE 7 : L'Architecture - Vulgarise (1 minute)
+## SLIDE 6 : L'Architecture - Vulgarise (1 minute)
 
 ### CE QUE VOUS DITES
 
@@ -103,13 +87,13 @@
 >
 > D'un cote, les utilisateurs, que ce soit via l'application desktop ou l'interface web.
 >
-> De l'autre, un serveur NAS heberge chez moi. Ce serveur contient toute l'intelligence : l'API qui recoit les questions, le moteur d'intelligence artificielle qui comprend et genere les reponses, et la base de donnees avec les 1366 questions-reponses.
+> De l'autre, un serveur local. Ce serveur contient toute l'intelligence : l'API qui recoit les questions, le moteur d'intelligence artificielle qui comprend et genere les reponses, et la base de connaissances.
 >
-> Le point cle : tout est local. Pas de donnees qui partent sur le cloud. Pas de cout d'API mensuel. Conforme RGPD de A a Z."
+> Le point cle : tout est local. Pas de donnees qui partent sur le cloud. Pas de cout d'API mensuel. Souverainete des donnees garantie."
 
 ---
 
-## SLIDE 8 : Les Resultats (1 minute 30)
+## SLIDE 7 : Les Resultats (1 minute 30)
 
 ### CE QUE VOUS DITES
 
@@ -125,29 +109,29 @@
 
 ---
 
-## SLIDE 9 : Ce qui me rend fier (1 minute 30)
+## SLIDE 8 : Ce qui me rend fier (1 minute 30)
 
 ### CE QUE VOUS DITES
 
 > "Parlons de ce qui me rend fier dans ce projet.
 >
-> Cote realisations : j'ai un systeme fonctionnel en production. Pas un prototype, un vrai produit qui tourne. Zero dependance au cloud, donc maitrise totale. Conforme RGPD puisque toutes les donnees restent locales. Et une architecture qui peut scaler si besoin.
+> Cote realisations : j'ai un systeme fonctionnel en production. Pas un prototype, un vrai produit qui tourne. Zero dependance au cloud, donc maitrise totale. Souverainete des donnees puisque tout reste local. Et une architecture qui peut scaler si besoin.
 >
 > Cote competences, ce projet m'a fait grandir enormement. Machine Learning applique au traitement du langage. Architecture microservices avec Docker. Optimisation memoire avec la quantization. Gestion de projet avec des iterations successives.
 >
-> Le plus grand defi que j'ai resolu ? Faire tourner une intelligence artificielle complete sur un NAS de 8 GB de RAM sans carte graphique. C'etait un vrai puzzle technique."
+> Le plus grand defi que j'ai resolu ? Faire tourner une intelligence artificielle complete sur un serveur avec des ressources limitees. C'etait un vrai puzzle technique."
 
 ---
 
-## SLIDE 10 : Les Defis Rencontres (1 minute 30)
+## SLIDE 9 : Les Defis Rencontres (1 minute 30)
 
 ### CE QUE VOUS DITES
 
 > "Bien sur, ca n'a pas ete un long fleuve tranquille. Laissez-moi vous raconter quelques defis.
 >
-> Premier probleme : memoire limitee. 8 GB de RAM pour tout le systeme. Solution : la quantization, une technique qui reduit l'empreinte memoire de 85%.
+> Premier probleme : memoire limitee. Solution : la quantization, une technique qui reduit l'empreinte memoire de 85%.
 >
-> Deuxieme probleme : pas de carte graphique. L'inference etait lente sur CPU. Solution : un format de modele optimise specifiquement pour le CPU.
+> Deuxieme probleme : ressources limitees au debut. Solution : optimiser le format du modele et upgrader progressivement le serveur.
 >
 > Troisieme probleme : les reponses sortaient parfois en anglais alors que je voulais du francais. Solution : des regles strictes dans le prompt.
 >
@@ -157,17 +141,7 @@
 
 ---
 
-## SLIDE 11 : Demonstration Teaser (30 secondes)
-
-### CE QUE VOUS DITES
-
-> "Assez parle, place a l'action. Je vais vous montrer Mila-Assist en direct.
->
-> Je vais faire trois tests. D'abord une question simple sur l'installation. Ensuite une question qui teste la comprehension, avec le fameux 'Mon PC rame'. Et enfin une question hors-sujet pour montrer que le systeme sait reconnaitre ses limites."
-
----
-
-## SLIDE 12 : Demo Live (3-4 minutes)
+## SLIDE 10 : Demonstration Live (3-4 minutes)
 
 ### CE QUE VOUS FAITES
 
@@ -195,7 +169,9 @@
 
 ### CE QUE VOUS DITES PENDANT LA DEMO
 
-> "Voila l'interface. Simple et efficace.
+> "Assez parle, place a l'action. Je vais vous montrer Mila-Assist en direct avec trois tests.
+>
+> Voila l'interface. Simple et efficace.
 >
 > Premiere question : 'Comment installer AI_licia'. On voit la reponse qui arrive en moins de 2 secondes. Le score de confiance est eleve, ce qui indique que le systeme est sur de lui.
 >
@@ -207,7 +183,7 @@
 
 ---
 
-## SLIDE 13 : Perspectives d'Evolution (1 minute)
+## SLIDE 11 : Perspectives d'Evolution (1 minute)
 
 ### CE QUE VOUS DITES
 
@@ -221,7 +197,7 @@
 
 ---
 
-## SLIDE 14 : Ce que j'ai appris (1 minute 30)
+## SLIDE 12 : Ce que j'ai appris (1 minute 30)
 
 ### CE QUE VOUS DITES
 
@@ -235,7 +211,7 @@
 
 ---
 
-## SLIDE 15 : Conclusion (1 minute)
+## SLIDE 13 : Conclusion (1 minute)
 
 ### CE QUE VOUS DITES
 
@@ -243,7 +219,7 @@
 >
 > 90% de taux de reussite, ce qui depasse l'objectif initial. Zero euro de cout d'API mensuel. Disponible 24 heures sur 24.
 >
-> Ce projet demontre qu'il est possible de creer une intelligence artificielle performante, hebergee localement, sans cout d'API, conforme RGPD, sur du materiel accessible.
+> Ce projet demontre qu'il est possible de creer une intelligence artificielle performante, hebergee localement, sans cout d'API, avec souverainete des donnees, sur du materiel accessible.
 >
 > L'intelligence artificielle au service de l'utilisateur, pas l'inverse.
 >
@@ -251,7 +227,7 @@
 
 ---
 
-## SLIDE 16 : Questions
+## SLIDE 14 : Questions
 
 ### CE QUE VOUS DITES
 
@@ -263,11 +239,11 @@
 
 ## Q1 : "Combien de temps a pris le projet ?"
 
-> "Environ 5 mois au total. 2 mois d'exploration et de recherche, 2 mois de developpement intensif, et 1 mois d'optimisation et de tests. Mais le travail n'est jamais vraiment fini, il y a toujours des ameliorations a apporter."
+> "Quelques mois de developpement. J'avais deja fait des recherches en amont sur les solutions existantes. Ensuite du developpement intensif et une phase d'optimisation et de tests. Mais le travail n'est jamais vraiment fini, il y a toujours des ameliorations a apporter."
 
 ## Q2 : "Pourquoi ne pas utiliser ChatGPT ?"
 
-> "Trois raisons principales. Premierement, le cout : les API d'OpenAI peuvent couter plusieurs centaines d'euros par mois en fonction de l'usage. Deuxiemement, le RGPD : les donnees des utilisateurs partiraient sur des serveurs americains. Troisiemement, les hallucinations : ChatGPT peut inventer des reponses, ce qui est inacceptable pour du support technique."
+> "Trois raisons principales. Premierement, le cout : les API d'OpenAI peuvent couter plusieurs centaines d'euros par mois en fonction de l'usage. Deuxiemement, la souverainete des donnees : les donnees des utilisateurs partiraient sur des serveurs externes. Troisiemement, les hallucinations : ChatGPT peut inventer des reponses, ce qui est inacceptable pour du support technique."
 
 ## Q3 : "Ca coute combien a faire tourner ?"
 
@@ -277,13 +253,13 @@
 
 > "Le systeme le detecte grace au score de confiance. Si la similarite est trop faible, il indique clairement a l'utilisateur qu'il n'a pas trouve d'information pertinente. Il ne tente pas d'inventer une reponse."
 
-## Q5 : "Comment avez-vous collecte les 1366 questions ?"
+## Q5 : "Comment avez-vous collecte les questions de la base ?"
 
 > "Elles proviennent de la documentation AI_licia, des FAQ existantes, et des questions frequemment posees au support humain. Chaque paire question-reponse a ete verifiee manuellement."
 
 ## Q6 : "C'est quoi le plus difficile dans ce projet ?"
 
-> "L'optimisation memoire. Faire tourner une intelligence artificielle complete sur 8 GB de RAM sans GPU, c'etait un vrai defi. J'ai du apprendre la quantization, tester differents modeles, ajuster tous les parametres pour que ca rentre."
+> "L'optimisation memoire. Faire tourner une intelligence artificielle complete sur un serveur avec des ressources limitees, c'etait un vrai defi. J'ai du apprendre la quantization, tester differents modeles, ajuster tous les parametres."
 
 ## Q7 : "Vous utiliseriez Mila-Assist dans d'autres contextes ?"
 
@@ -298,18 +274,17 @@
 | 1. Titre | 30s | 0:30 |
 | 2. Le Probleme | 1min30 | 2:00 |
 | 3. AI_licia Contexte | 1min30 | 3:30 |
-| 4. Mon Parcours | 2min | 5:30 |
-| 5. Le Defi (vulgarise) | 1min30 | 7:00 |
-| 6. Comment ca marche | 1min30 | 8:30 |
-| 7. Architecture | 1min | 9:30 |
-| 8. Les Resultats | 1min30 | 11:00 |
-| 9. Fierte | 1min30 | 12:30 |
-| 10. Defis | 1min30 | 14:00 |
-| 11. Demo Teaser | 30s | 14:30 |
-| 12. Demo Live | 3-4min | 18:00 |
-| 13. Perspectives | 1min | 19:00 |
-| 14. Apprentissages | 1min30 | (buffer) |
-| 15. Conclusion | 1min | 20:00 |
+| 4. Le Defi (vulgarise) | 1min30 | 5:00 |
+| 5. Comment ca marche | 1min30 | 6:30 |
+| 6. Architecture | 1min | 7:30 |
+| 7. Les Resultats | 1min30 | 9:00 |
+| 8. Fierte | 1min30 | 10:30 |
+| 9. Defis | 1min30 | 12:00 |
+| 10. Demo Live | 4-5min | 17:00 |
+| 11. Perspectives | 1min | 18:00 |
+| 12. Apprentissages | 1min | 19:00 |
+| 13. Conclusion | 1min | 20:00 |
+| 14. Questions | - | - |
 | **Total** | | **~20 min** |
 
 ---
