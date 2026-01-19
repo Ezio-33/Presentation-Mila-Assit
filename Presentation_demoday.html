@@ -125,21 +125,24 @@
                     <strong>Probleme :</strong> Comment faire comprendre le contexte a une machine ?
                 </div>
 
-                <div class="visual-diagram" style="margin-top: 20px;">
+                <div class="visual-diagram" style="margin-top: 20px; font-size: 0.8em;">
 <pre>
-Utilisateur : "Mon PC rame avec le TTS"
+Utilisateur : <span style="color: #a5b4fc;">"Mon PC rame avec le TTS"</span>
 
-Chatbot classique (mots-cles) :
-  "PC" -> ordinateur
-  "rame" -> ??? pagaie de bateau ???
-  "TTS" -> ???
-  -> Resultat : confusion totale
-
-<span class="highlight">Mila-Assist (comprehension contextuelle) :</span>
-  "PC" + "rame" + "TTS" dans le meme contexte
-  -> "rame" = lenteur informatique
-  -> "TTS" = Text-to-Speech d'AI_licia
-  -> Resultat : Solution de performance
+┌─────────────────────────────────────────┐    ┌─────────────────────────────────────────┐
+│  <span style="color: #ef4444;">CHATBOT CLASSIQUE (mots-clés)</span>          │    │  <span style="color: #22c55e;">MILA-ASSIST (compréhension IA)</span>        │
+│                                         │    │                                         │
+│  "PC"  ───→ ordinateur ✓                │    │  "PC" + "rame" + "TTS"                  │
+│  "rame" ───→ <span style="color: #ef4444;">pagaie de bateau ??</span>       │    │         │                             │
+│  "TTS" ───→ <span style="color: #ef4444;">inconnu ??</span>                │    │         ▼                             │
+│                                         │    │  <span style="color: #22c55e;">Analyse du CONTEXTE</span>                  │
+│  ───────────────────────                │    │         │                             │
+│  <span style="color: #ef4444;">Résultat : CONFUSION</span>                  │    │         ▼                             │
+│                                         │    │  "rame" = lenteur informatique         │
+│                                         │    │  "TTS" = Text-to-Speech AI_licia       │
+│                                         │    │                                         │
+│                                         │    │  <span style="color: #22c55e;">Résultat : SOLUTION PERTINENTE ✓</span>      │
+└─────────────────────────────────────────┘    └─────────────────────────────────────────┘
 </pre>
                 </div>
 
@@ -152,33 +155,29 @@ Chatbot classique (mots-cles) :
             <section>
                 <h2>Comment ca Marche ?</h2>
 
-                <div class="visual-diagram" style="font-size: 0.75em;">
+                <div class="visual-diagram" style="font-size: 0.72em;">
 <pre>
-                        MILA-ASSIST : LE PROCESSUS
-                        ==========================
-
-    VOUS                                          MILA
-     |                                              |
-     |  "Comment configurer le TTS ?"               |
-     |  ---------------------------------->         |
-     |                                              |
-     |           1. COMPRENDRE                      |
-     |           La question devient un             |
-     |           "code secret" numerique            |
-     |           (embedding 768 dimensions)         |
-     |                                              |
-     |           2. CHERCHER                        |
-     |           Mila cherche dans sa memoire       |
-     |           les 5 questions les plus proches   |
-     |           (recherche FAISS ultra-rapide)     |
-     |                                              |
-     |           3. REPONDRE                        |
-     |           L'IA formule une reponse           |
-     |           naturelle et complete              |
-     |                                              |
-     |  <----------------------------------         |
-     |  "Pour configurer le TTS, allez dans..."     |
-     |                                              |
+<span style="color: #a5b4fc;">"Comment configurer le TTS ?"</span>
+              │
+              ▼
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                         │
+│   <span style="color: #f59e0b;">1. COMPRENDRE</span>          <span style="color: #818cf8;">2. CHERCHER</span>            <span style="color: #22c55e;">3. RÉPONDRE</span>                       │
+│                                                                                         │
+│   Question ───→ Code    Code ───→ Base de     Contexte ───→ IA                          │
+│   en texte      numérique       connaissances              │                            │
+│                    │                 │                      ▼                           │
+│                    │                 │              Réponse naturelle                   │
+│                    ▼                 ▼              et complète                         │
+│              ┌──────────┐      ┌──────────┐                                             │
+│              │ 768 dim. │      │ Top 5    │                                             │
+│              │ embedding│      │ résultats│                                             │
+│              └──────────┘      └──────────┘                                             │
+│                                                                                         │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+              │
+              ▼
+<span class="highlight">"Pour configurer le TTS, allez dans Paramètres > Audio > Text-to-Speech..."</span>
 </pre>
                 </div>
             </section>
@@ -187,28 +186,27 @@ Chatbot classique (mots-cles) :
             <section>
                 <h2>L'Architecture</h2>
 
-                <div class="visual-diagram" style="font-size: 0.7em;">
+                <div class="visual-diagram" style="font-size: 0.68em;">
 <pre>
-+------------------+          +----------------------------------------+
-|                  |          |           SERVEUR LOCAL                |
-|   UTILISATEUR    |          |                                        |
-|                  |   --->   |   +----------+    +----------------+   |
-|  Application     |          |   |          |    |                |   |
-|  Bureau PyQt5    |          |   |   API    |--->|  Intelligence  |   |
-|                  |          |   |          |    |  Artificielle  |   |
-+------------------+          |   +----------+    |                |   |
-                              |        |          | - Comprehension|   |
-+------------------+          |        |          | - Recherche    |   |
-|                  |          |        v          | - Generation   |   |
-|   UTILISATEUR    |   --->   |   +----------+    +----------------+   |
-|                  |          |   |          |           |             |
-|  Interface Web   |          |   |   Base   |<----------+             |
-|                  |          |   | Connais. |                         |
-+------------------+          |   +----------+                         |
-                              +----------------------------------------+
+┌───────────────────┐                    ┌──────────────────────────────────────────────────────┐
+│                   │                    │              <span style="color: #818cf8;">SERVEUR LOCAL (NAS)</span>                     │
+│  <span style="color: #22c55e;">APP BUREAU</span>       │                    │                                                      │
+│  PyQt5            │ ──────────────────→│   ┌─────────┐     ┌─────────────────────────────┐   │
+│  + Calcul local   │                    │   │         │     │   <span style="color: #22c55e;">INTELLIGENCE ARTIFICIELLE</span>  │   │
+└───────────────────┘                    │   │   API   │────→│                             │   │
+                                         │   │ Backend │     │  • Compréhension (CamemBERT)│   │
+                                         │   │         │     │  • Recherche (FAISS)        │   │
+┌───────────────────┐                    │   └─────────┘     │  • Génération (Gemma-2B)    │   │
+│                   │                    │        │          └──────────────┬──────────────┘   │
+│  <span style="color: #f59e0b;">INTERFACE WEB</span>    │ ──────────────────→│        │                        │                  │
+│  Navigateur       │                    │        ▼                        ▼                  │
+│                   │                    │   ┌──────────────────────────────────────────┐     │
+└───────────────────┘                    │   │         <span style="color: #6366f1;">BASE DE CONNAISSANCES</span>            │     │
+                                         │   │         Q&A • MySQL                      │     │
+                                         │   └──────────────────────────────────────────┘     │
+                                         └──────────────────────────────────────────────────────┘
 
-                              Hebergement local = Souverainete des donnees
-                              Cout mensuel API : 0 EUR
+         <span style="color: #22c55e;">✓ Hébergement local = Souveraineté des données</span>          <span style="color: #22c55e;">✓ Coût API : 0€</span>
 </pre>
                 </div>
             </section>
@@ -323,10 +321,10 @@ Chatbot classique (mots-cles) :
 
                 <div class="box" style="max-width: 700px; margin: 25px auto; text-align: left;">
                     <strong>Tests a effectuer :</strong><br><br>
-                    1. <span class="highlight">Question simple</span> : "Comment installer AI_licia ?"<br><br>
-                    2. <span class="accent">Comprehension semantique</span> : "Mon PC rame avec le TTS"<br>
+                    1️⃣ <span class="highlight">Question simple</span> : "Comment installer AI_licia ?"<br><br>
+                    2️⃣ <span class="accent">Comprehension semantique</span> : "Mon PC rame quand je stream"<br>
                     <span style="font-size: 0.85em; color: #94a3b8;">(Le systeme doit comprendre que "rame" = lenteur)</span><br><br>
-                    3. <span style="color: #ef4444;">Question hors-sujet</span> : "Quelle est la capitale de la France ?"<br>
+                    3️⃣ <span style="color: #ef4444;">Question hors-sujet</span> → Disclaimer confiance faible<br>
                     <span style="font-size: 0.85em; color: #94a3b8;">(Le systeme doit indiquer qu'il ne sait pas)</span>
                 </div>
 

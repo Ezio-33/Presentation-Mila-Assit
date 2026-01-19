@@ -153,13 +153,13 @@
    - Commenter : "Confiance elevee, reponse complete"
 
 3. **Test 2 - Comprehension semantique** :
-   - Taper : "Mon PC rame avec le TTS"
+   - Taper : "Mon PC rame quand je stream"
    - Montrer la reponse
    - Commenter : "Le systeme a compris que 'rame' signifie lenteur"
 
 4. **Test 3 - Question hors-sujet** :
-   - Taper : "Quelle est la capitale de la France ?"
-   - Montrer la confiance faible et le message d'avertissement
+   - Taper une question hors-sujet
+   - Montrer la confiance faible et le disclaimer
    - Commenter : "Le systeme reconnait qu'il ne sait pas"
 
 5. **Page d'evaluation** (optionnel) :
@@ -175,9 +175,9 @@
 >
 > Premiere question : 'Comment installer AI_licia'. On voit la reponse qui arrive en moins de 2 secondes. Le score de confiance est eleve, ce qui indique que le systeme est sur de lui.
 >
-> Deuxieme question : 'Mon PC rame avec le TTS'. La, c'est interessant. Le systeme a compris que 'rame' dans ce contexte signifie lenteur informatique. Il propose des solutions de performance.
+> Deuxieme question : 'Mon PC rame quand je stream'. La, c'est interessant. Le systeme a compris que 'rame' dans ce contexte signifie lenteur informatique. Il propose des solutions de performance.
 >
-> Troisieme question : 'Quelle est la capitale de la France'. Regardez le score de confiance, il est bas. Le systeme dit clairement qu'il n'a pas trouve d'information pertinente. Il ne invente pas de reponse.
+> Troisieme question : une question hors-sujet. Regardez le score de confiance, il est bas. Le systeme dit clairement qu'il n'a pas trouve d'information pertinente. Il n'invente pas de reponse.
 >
 > Et si on va sur la page d'evaluation, on peut voir les metriques en temps reel sur un echantillon de 20 questions. C'est comme ca que j'obtiens les 90% de taux de reussite."
 
@@ -264,6 +264,48 @@
 ## Q7 : "Vous utiliseriez Mila-Assist dans d'autres contextes ?"
 
 > "Absolument. L'architecture est generique. Il suffit de changer la base de questions-reponses pour l'adapter a un autre domaine : support produit, FAQ interne d'entreprise, assistance medicale non-diagnostic... Les possibilites sont nombreuses."
+
+---
+
+# QUESTIONS ANTICIPEES (semi-techniques)
+
+_Ces questions peuvent etre posees si le jury a des notions techniques._
+
+## Q8 : "Comment le système comprend-il les questions ?"
+
+> "Le systeme utilise un modele d'intelligence artificielle appele CamemBERT, specialise pour le francais. Quand vous posez une question, elle est transformee en un vecteur de 768 nombres. C'est comme une empreinte numerique unique qui capture le sens de votre question. Ensuite, on compare cette empreinte avec celles de toutes les questions de notre base pour trouver les plus similaires."
+
+## Q9 : "C'est quoi exactement le RAG ?"
+
+> "RAG signifie Retrieval-Augmented Generation. C'est une technique en deux etapes. D'abord, on retrouve les documents pertinents dans notre base, c'est le Retrieval. Ensuite, on genere une reponse en se basant uniquement sur ces documents, c'est la Generation. L'avantage majeur : l'IA ne peut pas inventer de reponses puisqu'elle reformule uniquement ce qu'elle a trouve dans la base."
+
+## Q10 : "Pourquoi 90% et pas 100% ?"
+
+> "Les 10% d'echecs viennent principalement de trois cas : des questions formulees de maniere tres inhabituelle, des questions sur des sujets tres specifiques peu documentes dans la base, et des questions ambigues qui pourraient avoir plusieurs sens. L'objectif etait 85%, donc 90% est deja un excellent resultat. Pour aller plus loin, il faudrait enrichir la base de connaissances."
+
+## Q11 : "Comment fonctionne votre serveur ?"
+
+> "J'utilise Docker avec 4 containers. Un container pour la base de donnees MySQL qui stocke les questions-reponses. Un container pour l'API qui recoit les requetes. Un container pour l'intelligence artificielle qui fait le travail de comprehension et de generation. Et un dernier pour l'administration. Cette architecture permet d'isoler chaque composant et de les mettre a jour independamment."
+
+## Q12 : "Le modèle d'IA, c'est lequel exactement ?"
+
+> "J'utilise Gemma-2 de Google, un modele de 2 milliards de parametres. C'est ce qu'on appelle un Small Language Model ou SLM, beaucoup plus leger que les grands modeles comme GPT-4. Il est optimise avec une technique appelee quantization qui reduit sa consommation memoire de 85%. Pour du RAG, ou le modele reformule un contexte fourni, ca suffit largement."
+
+## Q13 : "Comment mesurez-vous les 90% ?"
+
+> "J'utilise une metrique standard appelee Hit Rate. Sur un echantillon de questions de test, je verifie si la bonne reponse apparait dans les 5 premiers resultats retournes par le systeme. Si oui, c'est un succes. Sur 20 questions de test, 18 trouvent une reponse pertinente, donc 90%. J'ai aussi le MRR a 85% qui indique que la bonne reponse est presque toujours en premiere position."
+
+## Q14 : "Et la sécurité des données ?"
+
+> "Tout est local. Les questions des utilisateurs ne quittent jamais le serveur. Pas de donnees envoyees sur le cloud, pas d'API externe qui pourrait logger les conversations. C'est un point crucial pour la conformite RGPD. Le NAS est sur un reseau securise avec acces restreint."
+
+## Q15 : "Si je pose la même question différemment, ça marche ?"
+
+> "Oui, c'est justement la force du systeme. Grace a la comprehension semantique, 'Comment installer AI_licia', 'Je veux installer le logiciel' et 'Quelle est la procedure d'installation' donnent des resultats similaires. Le systeme comprend le sens, pas juste les mots-cles. C'est ce qui differencie une IA moderne d'un simple moteur de recherche."
+
+## Q16 : "Pourquoi CamemBERT et pas un autre modèle ?"
+
+> "CamemBERT est specialise pour le francais. Les modeles multilingues comme MiniLM diluent leur capacite sur 50 langues. CamemBERT concentre ses 110 millions de parametres uniquement sur le francais, ce qui donne de meilleurs resultats pour mon cas d'usage. J'ai teste plusieurs alternatives, et CamemBERT avec le fine-tuning MS MARCO offrait le meilleur Hit Rate."
 
 ---
 
