@@ -12,38 +12,38 @@
 ### CE QUE VOUS DITES
 
 > "Bonjour a tous ! Je m'appelle Samuel Verschueren et je vais vous presenter Mila-Assist.
->
+> 
 > Imaginez un chatbot qui ne se contente pas de chercher des mots-cles, mais qui **comprend vraiment** ce que vous lui demandez. C'est exactement ce que j'ai construit."
 
 ---
 
-## SLIDE 2 : Le Probleme (1 minute 30)
+## 
 
-### CE QUE VOUS DITES
-
-> "Laissez-moi vous raconter le probleme de depart.
->
-> AI_licia est une plateforme innovante pour les streamers. Super produit, mais un probleme majeur : le support technique etait completement deborde.
->
-> Avant Mila-Assist, c'etait du support 100% humain. Temps de reponse ? Des heures. Les memes questions revenaient en boucle. Et la nuit ? Personne pour repondre.
->
-> Avec Mila-Assist, tout change. Reponse 24 heures sur 24, 7 jours sur 7. Le systeme comprend les questions, meme formulees differemment. Une base de connaissances complete. Et le support humain peut enfin se concentrer sur les cas complexes.
->
-> C'est le passage d'un support reactif a un support intelligent."
-
----
-
-## SLIDE 3 : AI_licia - Le Contexte (1 minute 30)
+## SLIDE 2 : AI_licia - Le Contexte (1 minute 30)
 
 ### CE QUE VOUS DITES
 
 > "Un mot sur AI_licia pour ceux qui ne connaissent pas.
->
+> 
 > C'est une plateforme qui permet aux streamers de creer leur propre intelligence artificielle. Ils peuvent personnaliser la voix, l'apparence, le comportement. Cette IA interagit ensuite automatiquement avec les viewers pendant les streams.
->
+> 
 > Mila-Assist est le support technique de cette plateforme. Quand un utilisateur se demande comment installer AI_licia, comment configurer la voix, ou pourquoi ca rame, c'est Mila qui repond.
->
+> 
 > En resume : une base de connaissances complete, disponibilite 24/7, et un temps de reponse variable selon la complexite."
+
+---
+
+## SLIDE 3 : Le Probleme (1 minute 30)
+
+### CE QUE VOUS DITES
+
+> "Ai_licia c'est un super produit, mais qui peu avoir un probleme majeur : le support technique peu etre debordé.
+> 
+> Avant Mila-Assist, c'etait du support 100% humain. Temps de reponse ? variable selon les disponibilité. Les memes questions revenaient en boucle. Et la nuit ? Personne pour repondre.
+> 
+> Avec Mila-Assist, tout change. Reponse 24 heures sur 24, 7 jours sur 7. Le systeme comprend les questions. Une base de connaissances solide. Et le support humain peut enfin se concentrer sur les cas complexes et l'ajout de fonctionalité encore plus inovente et exeptionel.
+> 
+> C'est le passage d'un support a temps variable a un support automatiser."
 
 ---
 
@@ -52,11 +52,11 @@
 ### CE QUE VOUS DITES
 
 > "Le coeur du defi, c'etait de faire comprendre le contexte a une machine.
->
+> 
 > Prenons un exemple concret. Un utilisateur ecrit : 'Mon PC rame avec le TTS'. Un chatbot classique base sur les mots-cles va etre perdu. 'PC', ok c'est un ordinateur. 'Rame' ? Une pagaie de bateau ? 'TTS' ? Aucune idee.
->
+> 
 > Mila-Assist, elle, analyse le contexte. 'PC' plus 'rame' plus 'TTS' dans la meme phrase. Elle comprend que 'rame' signifie lenteur en informatique, et que 'TTS' c'est le Text-to-Speech d'AI_licia. Resultat : elle propose une solution pour ameliorer les performances.
->
+> 
 > C'est ca la difference entre un chatbot classique et une intelligence artificielle qui comprend vraiment."
 
 ---
@@ -66,15 +66,15 @@
 ### CE QUE VOUS DITES
 
 > "Alors comment ca fonctionne concretement ?
->
+> 
 > Quand vous posez une question, Mila fait trois choses.
->
-> Premiere etape : comprendre. La question est transformee en une sorte de code secret numerique. C'est comme traduire votre question dans un langage que la machine comprend parfaitement.
->
-> Deuxieme etape : chercher. Mila parcourt sa base de connaissances et trouve les 5 questions les plus proches de la votre. Cette recherche est ultra-rapide.
->
+> 
+> Premiere etape : comprendre. La question est transformee en une sorte de code numerique. C'est comme traduire votre question dans un langage que la machine comprend parfaitement.
+> 
+> Deuxieme etape : la chercher. Mila parcourt sa base de connaissances et trouve les 5 reponse les plus proches de votre question. Cette recherche est ultra-rapide.
+> 
 > Troisieme etape : repondre. Avec ces 5 elements de contexte, l'intelligence artificielle formule une reponse naturelle et complete.
->
+> 
 > Le tout en moins de 2 secondes."
 
 ---
@@ -84,11 +84,11 @@
 ### CE QUE VOUS DITES
 
 > "Cote technique, j'ai une architecture simple mais robuste.
->
+> 
 > D'un cote, les utilisateurs, que ce soit via l'application desktop ou l'interface web.
->
+> 
 > De l'autre, un serveur local. Ce serveur contient toute l'intelligence : l'API qui recoit les questions, le moteur d'intelligence artificielle qui comprend et genere les reponses, et la base de connaissances.
->
+> 
 > Le point cle : tout est local. Pas de donnees qui partent sur le cloud. Pas de cout d'API mensuel. Souverainete des donnees garantie."
 
 ---
@@ -98,14 +98,12 @@
 ### CE QUE VOUS DITES
 
 > "Passons aux resultats concrets.
->
+> 
 > Premier chiffre : 90% de taux de reussite. Ca veut dire que 9 questions sur 10 trouvent une reponse pertinente dans le systeme. L'objectif etait 85%, donc mission accomplie et depassee.
->
+> 
 > Deuxieme chiffre : 85% de qualite de classement. Ca mesure ou se trouve la bonne reponse. En moyenne, elle est presque toujours en premiere position.
->
-> Troisieme chiffre : moins de 2 secondes pour le pipeline complet. De la question a la reponse, tout se passe quasi instantanement.
->
-> Ces chiffres ne sont pas theoriques. Je les mesure en temps reel avec un endpoint de test que je vous montrerai pendant la demo."
+> 
+> Troisieme chiffre : moins de 2 secondes pour le pipeline complet. De la question a la reponse, tout se passe quasi instantanement."
 
 ---
 
@@ -114,11 +112,11 @@
 ### CE QUE VOUS DITES
 
 > "Parlons de ce qui me rend fier dans ce projet.
->
-> Cote realisations : j'ai un systeme fonctionnel en production. Pas un prototype, un vrai produit qui tourne. Zero dependance au cloud, donc maitrise totale. Souverainete des donnees puisque tout reste local. Et une architecture qui peut scaler si besoin.
->
+> 
+> Coté realisations : j'ai un systeme fonctionnel en production. Pas un prototype, un vrai produit qui tourne. Zero dependance au cloud, donc maitrise totale. Souverainete des donnees puisque tout reste local. Et une architecture qui peut scaler si besoin.
+> 
 > Cote competences, ce projet m'a fait grandir enormement. Machine Learning applique au traitement du langage. Architecture microservices avec Docker. Optimisation memoire avec la quantization. Gestion de projet avec des iterations successives.
->
+> 
 > Le plus grand defi que j'ai resolu ? Faire tourner une intelligence artificielle complete sur un serveur avec des ressources limitees. C'etait un vrai puzzle technique."
 
 ---
@@ -128,57 +126,33 @@
 ### CE QUE VOUS DITES
 
 > "Bien sur, ca n'a pas ete un long fleuve tranquille. Laissez-moi vous raconter quelques defis.
->
+> 
 > Premier probleme : memoire limitee. Solution : la quantization, une technique qui reduit l'empreinte memoire de 85%.
->
+> 
 > Deuxieme probleme : ressources limitees au debut. Solution : optimiser le format du modele et upgrader progressivement le serveur.
->
+> 
 > Troisieme probleme : les reponses sortaient parfois en anglais alors que je voulais du francais. Solution : des regles strictes dans le prompt.
->
+> 
 > Quatrieme probleme : le modele inventait des liens internet fictifs. Solution : une interdiction absolue codee dans le prompt.
->
+> 
 > Chaque probleme a ete une opportunite d'apprendre quelque chose de nouveau."
 
 ---
 
 ## SLIDE 10 : Demonstration Live (3-4 minutes)
 
-### CE QUE VOUS FAITES
-
-1. **Ouvrir l'interface web** : http://185.246.86.162:8080
-
-2. **Test 1 - Question simple** :
-   - Taper : "Comment installer AI_licia ?"
-   - Montrer la reponse et le score de confiance
-   - Commenter : "Confiance elevee, reponse complete"
-
-3. **Test 2 - Comprehension semantique** :
-   - Taper : "Mon PC rame quand je stream"
-   - Montrer la reponse
-   - Commenter : "Le systeme a compris que 'rame' signifie lenteur"
-
-4. **Test 3 - Question hors-sujet** :
-   - Taper une question hors-sujet
-   - Montrer la confiance faible et le disclaimer
-   - Commenter : "Le systeme reconnait qu'il ne sait pas"
-
-5. **Page d'evaluation** (optionnel) :
-   - Aller sur http://185.246.86.162:9000/api/v1/admin/evaluation?sample=20
-   - Montrer les metriques en temps reel
-   - Commenter : "C'est comme ca que je mesure les 90% de reussite"
-
 ### CE QUE VOUS DITES PENDANT LA DEMO
 
 > "Assez parle, place a l'action. Je vais vous montrer Mila-Assist en direct avec trois tests.
->
+> 
 > Voila l'interface. Simple et efficace.
->
+> 
 > Premiere question : 'Comment installer AI_licia'. On voit la reponse qui arrive en moins de 2 secondes. Le score de confiance est eleve, ce qui indique que le systeme est sur de lui.
->
+> 
 > Deuxieme question : 'Mon PC rame quand je stream'. La, c'est interessant. Le systeme a compris que 'rame' dans ce contexte signifie lenteur informatique. Il propose des solutions de performance.
->
+> 
 > Troisieme question : une question hors-sujet. Regardez le score de confiance, il est bas. Le systeme dit clairement qu'il n'a pas trouve d'information pertinente. Il n'invente pas de reponse.
->
+> 
 > Et si on va sur la page d'evaluation, on peut voir les metriques en temps reel sur un echantillon de 20 questions. C'est comme ca que j'obtiens les 90% de taux de reussite."
 
 ---
@@ -188,11 +162,11 @@
 ### CE QUE VOUS DITES
 
 > "Et apres ? Quelles sont les perspectives ?
->
-> A court terme, j'aimerais ameliorer l'interface utilisateur, ajouter plus de questions dans la base, et integrer un historique de conversation.
->
-> A plus long terme, je vois du support vocal avec reconnaissance et synthese de parole, du multi-langues pour toucher plus d'utilisateurs, et pourquoi pas un apprentissage continu ou le systeme s'ameliore avec les retours des utilisateurs.
->
+> 
+> A court terme, j'aimerais ameliorer l'interface utilisateur, ajouter plus de questions dans la base, et integrer unretour utilisateur.
+> 
+> A plus long terme, je vois du support vocal avec reconnaissance et synthese de parole, Une prise en charge plus large du support comme les plug in obs recommander, et pourquoi pas un acces à la base de connaissance aux developpeur de AI_licia pour qu'il puissent enrichire cette base en avance par rapport à des mise a jour qu'il pourait mettre en place
+> 
 > La vision : un assistant intelligent qui evolue avec les besoins."
 
 ---
@@ -202,11 +176,11 @@
 ### CE QUE VOUS DITES
 
 > "Ce projet m'a enormement appris.
->
+> 
 > En Machine Learning, j'ai decouvert les embeddings, les Transformers, et l'architecture RAG. En architecture logicielle, j'ai pratique les microservices et Docker. En optimisation, j'ai appris la quantization et le edge computing. Et en gestion de projet, j'ai compris l'importance des iterations.
->
+> 
 > La lecon principale ? Un bon produit se construit par iterations. Ma premiere version avait 72% de reussite. En analysant les echecs, en ajustant les parametres, en testant encore et encore, je suis arrive a 90%.
->
+> 
 > C'est cette approche iterative qui fait la difference."
 
 ---
@@ -216,13 +190,13 @@
 ### CE QUE VOUS DITES
 
 > "En conclusion, Mila-Assist c'est :
->
+> 
 > 90% de taux de reussite, ce qui depasse l'objectif initial. Zero euro de cout d'API mensuel. Disponible 24 heures sur 24.
->
+> 
 > Ce projet demontre qu'il est possible de creer une intelligence artificielle performante, hebergee localement, sans cout d'API, avec souverainete des donnees, sur du materiel accessible.
->
+> 
 > L'intelligence artificielle au service de l'utilisateur, pas l'inverse.
->
+> 
 > Merci pour votre attention."
 
 ---
@@ -311,23 +285,23 @@ _Ces questions peuvent etre posees si le jury a des notions techniques._
 
 # TIMING RECOMMANDE
 
-| Slide | Duree | Cumule |
-|-------|-------|--------|
-| 1. Titre | 30s | 0:30 |
-| 2. Le Probleme | 1min30 | 2:00 |
-| 3. AI_licia Contexte | 1min30 | 3:30 |
-| 4. Le Defi (vulgarise) | 1min30 | 5:00 |
-| 5. Comment ca marche | 1min30 | 6:30 |
-| 6. Architecture | 1min | 7:30 |
-| 7. Les Resultats | 1min30 | 9:00 |
-| 8. Fierte | 1min30 | 10:30 |
-| 9. Defis | 1min30 | 12:00 |
-| 10. Demo Live | 4-5min | 17:00 |
-| 11. Perspectives | 1min | 18:00 |
-| 12. Apprentissages | 1min | 19:00 |
-| 13. Conclusion | 1min | 20:00 |
-| 14. Questions | - | - |
-| **Total** | | **~20 min** |
+| Slide                  | Duree  | Cumule      |
+| ---------------------- | ------ | ----------- |
+| 1. Titre               | 30s    | 0:30        |
+| 2. Le Probleme         | 1min30 | 2:00        |
+| 3. AI_licia Contexte   | 1min30 | 3:30        |
+| 4. Le Defi (vulgarise) | 1min30 | 5:00        |
+| 5. Comment ca marche   | 1min30 | 6:30        |
+| 6. Architecture        | 1min   | 7:30        |
+| 7. Les Resultats       | 1min30 | 9:00        |
+| 8. Fierte              | 1min30 | 10:30       |
+| 9. Defis               | 1min30 | 12:00       |
+| 10. Demo Live          | 4-5min | 17:00       |
+| 11. Perspectives       | 1min   | 18:00       |
+| 12. Apprentissages     | 1min   | 19:00       |
+| 13. Conclusion         | 1min   | 20:00       |
+| 14. Questions          | -      | -           |
+| **Total**              |        | **~20 min** |
 
 ---
 

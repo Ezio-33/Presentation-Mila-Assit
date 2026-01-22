@@ -35,9 +35,9 @@
 
 > "L'indexation comprend trois etapes critiques. La premiere est le **chunking**, c'est-a-dire comment decouper les documents.
 > 
-> J'ai evalue trois strategies. Le chunking par taille fixe decoupe en blocs de N tokens, mais risque de couper des phrases importantes. Le chunking semantique decoupe par paragraphes, plus intelligent mais complexe.
+> J'ai evalue trois strategies. Le chunking par taille fixe decoupe en blocs de N tokens. Le chunking semantique decoupe par paragraphes, plus intelligent mais complexe.
 > 
-> J'ai choisi l'approche **document-level** : une paire question-reponse egale un vecteur. Pourquoi ? Ma base contient peu de Q&R courtes. Chunker ces paires couperait le contexte necessaire au Self-Attention du modele.
+> Et j'ai choisi l'approche **document-level** : une paire question-reponse egale un vecteur. Pourquoi ? Ma base contient peu de Q&R courtes. Chunker ces paires couperait le contexte necessaire au Self-Attention du modele.
 
 ---
 
@@ -59,7 +59,7 @@
 > 
 > J'ai compare plusieurs alternatives. Word2Vec est statique, le mot 'chat' aura toujours le meme vecteur que ce soit un animal ou une discussion Twitch. MiniLM multilingue dilue sa capacite sur 50 langues.
 > 
-> CamemBERT MS MARCO concentre ses 110 millions de parametres sur le francais et est optimise pour la recherche semantique. C'est le meilleur compromis pour mon cas d'usage avec un Hit Rate de 90%."
+> CamemBERT MS MARCO concentre ses 110 millions de parametres sur le francais et est optimise pour la recherche semantique. C'est le meilleur compromis pour mon cas d'usage."
 
 ---
 
@@ -132,7 +132,7 @@
 
 ## SLIDE 13 : Prompt Systeme (30 secondes)
 
-> "Le prompt utilise le format Instruct. Deux regles critiques construites par iterations : francais obligatoire et interdiction d'inventer des URLs."
+> "Le prompt utilise le format Instruct. Des regles critiques construites par iterations : francais obligatoire et interdiction d'inventer des URLs."
 
 ---
 
@@ -146,7 +146,7 @@
 
 > "L'architecture est **stateless**, l'historique de conversation n'est PAS inclus dans le contexte.
 > 
-> Chaque requete est independante et contient : le prompt systeme d'environ 200 tokens, les 5 documents FAISS de 800 a 1500 tokens, la question utilisateur de 50 tokens, et la reponse generee de maximum 512 tokens.
+> Chaque requete est independante et contient : le prompt systeme, les 5 réponse optenue par FAISS, la question de l'utilisateur et la reponse generee.
 > 
 > Au total, j'utilise environ 2000 a 2500 tokens sur les 4096 disponibles."
 
@@ -161,20 +161,19 @@
 ## SLIDE 17 : Metriques avec Preuves (2 minutes)
 
 > "Les metriques sont mesurables et reproductibles via l'endpoint d'evaluation.
+> (Montre l'evaluation relisé)
 > 
 > Hit Rate 90% signifie que 9 questions sur 10 trouvent au moins une reponse pertinente dans le top-5. MRR 85% signifie que la bonne reponse est en position moyenne 1.18, donc presque toujours en premiere position. Confiance moyenne 77.7% est la similarite cosinus moyenne.
 > 
-> Pour avoir ses information. D'abord on prend les top-K predictions de FAISS. Ensuite on calcule combien sont pertinents par intersection avec le ground truth. Le Hit Rate est binaire : 1 si au moins un resultat pertinent, 0 sinon. Le MRR est 1 divise par le rang du premier resultat pertinent.
-> 
-> Vous pouvez tester en direct sur l'endpoint affiche."
+> Pour avoir ses information. D'abord on prend les top-K predictions de FAISS. Ensuite on calcule combien sont pertinents par intersection avec le ground truth. Le Hit Rate est binaire : 1 si au moins un resultat pertinent, 0 sinon. Le MRR est 1 divise par le rang du premier resultat pertinent."
 
 ---
 
 ## SLIDE 18 : Hit Rate vs Precision@K (1 minute)
 
-> "Precision@5 divise le nombre de resultats pertinents par 5. Si je trouve 2 bons resultats sur 5, j'ai 40%. Mais cette metrique est biaisee : meme avec un systeme parfait, si une seule reponse est correcte, Precision@5 = 1/5 = 20%.
+> "Pourquoi le Hit Rate et non pas un test de precision? Car avec un test de precision on divise le nombre de resultats pertinents par 5. Si je trouve 2 bons resultats sur 5, j'ai 40%. Mais cette metrique est biaisee : meme avec un systeme parfait, si une seule reponse est correcte, Precision@5 = 1/5 = 20%.
 > 
-> le Hit Rate est plus adapte a un chatbot car l'utilisateur veut TROUVER au moins une bonne reponse. C'est binaire : succes ou echec. Sur 20 questions, 18 trouvent une reponse pertinente, donc 90%.
+> le Hit Rate est plus adapte a un chatbot car pour Un support on veut TROUVER au moins une bonne reponse pour le contecte.
 
 ---
 
@@ -184,7 +183,7 @@
 > 
 > Premier test, une question simple : 'Comment installer AI_licia'. Le systeme devrait retourner la procedure d'installation avec une confiance elevee.
 > 
-> Deuxieme test, comprehension semantique : 'Mon PC rame quand je stream'. Ici, le Self-Attention doit comprendre que 'rame' dans le contexte de 'PC' signifie 'lent', pas une pagaie de bateau.
+> Deuxieme test, comprehension semantique : 'Mon PC rame quand je stream'. Ici, le Self-Attention doit comprendre que 'rame' dans le contexte de 'PC' signifie 'lent', pas une pagaie de bateau toujours avec un score de confiance elevé.
 > 
 > Troisieme test, question hors-sujet pour montrer que le score de confiance detecte les questions non pertinentes."
 
@@ -209,8 +208,6 @@
 > Le système combine CamemBERT pour les embeddings contextuels, FAISS pour la recherche vectorielle et un LLM quantifié Q4 pour la génération.
 > 
 > L'architecture edge computing avec 4 containers Docker garantit la scalabilité et la maintenabilité.
-> 
-> 
 > 
 > Merci pour votre attention. Je suis disponible pour vos questions."
 
